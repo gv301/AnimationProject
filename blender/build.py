@@ -590,8 +590,8 @@ SKY = {   # scene: (sun elevation at start, at end, azimuth)
     "s10_flight": (3.2, 2.6, SUN_SET),
     "s11_beach": (2.4, 0.8, SUN_SET),
 }
-OCEAN = {"s06_transform": (0, 98), "s07_learning": (10, 98), "s08_ride": (210, 95), "s09_hill": (500, 40),
-         "s10_flight": (540, 40), "s11_beach": (1150, 95)}
+OCEAN = {"s06_transform": (0, 205), "s07_learning": (10, 205), "s08_ride": (210, 205), "s09_hill": (520, 140),
+         "s10_flight": (560, 140), "s11_beach": (1150, 205)}
 
 
 def animate_world(film, sea, sky, sun):
@@ -692,7 +692,7 @@ def cameras(film, scene, poses, hill, percy):
         Shot("s08_fish", F(s8, "fish", -0.6), F(s8, "catch", 0.9), track((1.6, -3.4, 1.0), (0.6, 1.0, 1.1)), 30, 5.6),
         Shot("s08_my_fish", F(s8, "catch", 0.9), film.scene_range(s8)[1], track((1.5, -2.3, 1.5), (0.5, 0, 1.2)), 40, 2.8),
         Shot("s09_climb", film.scene_range(s9)[0], F(s9, "crest", 0.6), track((-3.2, -2.6, 0.9), (2.0, 0, 0.9)), 32, 5.6),
-        Shot("s09_crest", F(s9, "crest", 0.6), F(s9, "tip"), track((-2.6, 0.9, 1.9), (12.0, 0, -3.0)), 28, 8),
+        Shot("s09_crest", F(s9, "crest", 0.6), F(s9, "tip"), track((-2.6, 1.6, 1.9), (12.0, 4.5, -3.2)), 28, 8),
         Shot("s09_descent", F(s9, "tip"), F(s9, "duck"), track((3.6, -1.6, 0.6), (0.3, 0, 0.85)), 28, 4),
         Shot("s09_duck", F(s9, "duck"), F(s9, "umbrella"), track((1.7, -1.5, 1.05), (0.45, 0, 0.75)), 35, 2.8),
         Shot("s09_umbrella", F(s9, "umbrella"), F(s9, "pier"), track((0.3, -6.4, 1.8), (0.4, 0, 1.0)), 35, 5.6),
