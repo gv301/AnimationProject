@@ -18,7 +18,7 @@ from .common import PERCY, draw_page, blink, keyed, riding_pose, draw_rider, tal
 from .locations import coast, title_card
 
 NAME = "s06_transform"
-LOOK = {"grain": 0.8, "vignette": 0.7}
+LOOK = {"grain": 0.8, "vignette": 0.7, "grade": "golden", "bloom": 0.7, "threshold": 0.7}
 
 BEATS = [
     Mark("glow"), Wait(1.0), Mark("peel"), Wait(2.6), Mark("world"), Wait(2.2), Mark("bike"),
@@ -39,6 +39,13 @@ def camera(ctx):
     sx = lerp(PERCY_SCREEN[0], 700.0, ease_in_out(ctx.between("title", ctx.cue("title") + 2.6)))
     sy = lerp(PERCY_SCREEN[1], 840.0, ease_in_out(ctx.between("title", ctx.cue("title") + 2.6)))
     return wd.Camera(x=PERCY_WORLD[0] - (sx - W / 2) / z, y=PERCY_WORLD[1] - (sy - H / 2) / z, zoom=z)
+
+
+def look(ctx):
+    """The page keeps its paper and neutral grade until the world floods in, then warms."""
+    u = smoothstep(0.0, 1.0, ctx.between("peel", "world"))
+    return {"paper": 0.32 * (1 - u), "bloom": 0.7 * u,
+            "grades": [("page", 1 - u), ("golden", u)] if 0 < u < 1 else [("golden" if u >= 1 else "page", 1.0)]}
 
 
 def palette(ctx):

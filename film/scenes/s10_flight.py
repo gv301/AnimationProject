@@ -18,7 +18,7 @@ from .common import PERCY, blink, keyed, riding_pose, draw_rider, lerp_wing
 from .locations import sea_x_under
 
 NAME = "s10_flight"
-LOOK = {"grain": 0.9, "vignette": 0.85}
+LOOK = {"grain": 0.9, "vignette": 0.85, "grade": "sunset", "bloom": 1.0, "threshold": 0.6, "tint": (1.0, 0.82, 0.6), "wide": 1.3}
 
 BEATS = [
     Mark("slowmo"), Wait(1.3), Say("L48", gap=0.0), Say("L49", gap=0.7), Say("L50", gap=0.9),
@@ -97,6 +97,9 @@ def _flight_path(ctx, tw):
     return (x0 + 950 * k, y0 - climb + 40 * math.sin(k * 1.3))
 
 
+CHEST = 330.0       # world units from the rider's origin up to Percy's chest at scale 1
+
+
 def _shot(ctx, tw):
     t = ctx.t
     c = ctx.cues
@@ -108,13 +111,15 @@ def _shot(ctx, tw):
         cam = wd.Camera(x=px + 140 - 60 * u, y=py - 230 + 30 * u, zoom=zoom, rot=0.03 * math.sin(u * 2))
         return cam, (px, py), 1.0
     if t < c["soar"]:
-        # he sweeps up past the camera
+        # the hero shot: the camera holds on his chest as he grows toward it with his wings
+        # spread against the sun; it cuts wide as he soars away
         k = ctx.between("wings", "soar")
         anchor = _flight_path(ctx, world_time(ctx.at(c["wings"])))
-        cam = wd.Camera(x=anchor[0] + 140, y=anchor[1] - 230, zoom=1.45)
-        # he rushes up toward the camera, wings filling the frame
-        scale = 1.0 + 2.3 * ease_in_out(k) ** 1.6
-        pos = (anchor[0] - 60 * k, anchor[1] - 120 * math.sin(k * math.pi * 0.5) + 160 * k * k)
+        grow = ease_in_out(clamp(k / 0.6))
+        scale = 1.0 + 0.7 * grow + 0.12 * k
+        pos = (anchor[0] - 40 * k, anchor[1] - 60 * grow)
+        cam = wd.Camera(x=pos[0] + 120 - 50 * grow, y=pos[1] - CHEST * scale + 40,
+                        zoom=1.45 - 0.25 * grow, rot=-0.035 * grow)
         return cam, pos, scale
     # wide: soaring over the bay
     k = t - c["soar"]

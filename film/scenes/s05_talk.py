@@ -14,7 +14,7 @@ from ..timeline import Say, Wait, Mark
 from .common import PERCY, draw_page, blink, keyed, ease_pop
 
 NAME = "s05_talk"
-LOOK = {"grain": 0.5, "vignette": 0.3}
+LOOK = {"grain": 0.5, "vignette": 0.3, "grade": "page", "paper": 0.32}
 
 GEO = bk.ADULT
 GROUND = 880.0
@@ -88,13 +88,9 @@ def draw(canvas, ctx):
     glow = smoothstep(ctx.cue("grip"), ctx.dur, t)
     draw_page(canvas, "pelican_bicycle.svg", 4817, t, glow=glow)
     settle = ease_pop((t - ctx.cue("settle")) / 0.4)
-    # slow push-in during the confession, ease back out for the transformation
-    zoom = 1.0 + 0.3 * smoothstep(0.0, ctx.cue("L11"), t) + 0.12 * smoothstep(ctx.cue("L11"), ctx.cue("L13"), t) \
-        - 0.1 * smoothstep(ctx.cue("L18"), ctx.cue("L20"), t) \
-        - 0.32 * smoothstep(ctx.cue("L21") - 0.6, ctx.dur, t)
-    focus = (1000, 600)
+    focus, zoom, anchor = camera(ctx)
     canvas.save()
-    canvas.translate(focus[0], focus[1])
+    canvas.translate(*anchor)
     canvas.scale(zoom * settle, zoom * settle)
     canvas.translate(-focus[0], -focus[1])
     canvas.drawPath(gfx.poly([(420, GROUND), (1520, GROUND)], False), gfx.stroke("#cfcac0", 3))
@@ -115,11 +111,54 @@ def draw(canvas, ctx):
     with gfx.saved(canvas, *SEAT):
         PERCY.draw(canvas, pose, look, bike=(GEO, bk.State(wheel=0.3, crank=1.2), blook))
     _glyphs(canvas, ctx)
+    _model(canvas, ctx)
     canvas.restore()
-    _model(canvas, ctx, zoom)
 
 
-def _model(canvas, ctx, zoom):
+CENTRE = (W / 2, H / 2)
+FACE = (980, 330)          # Percy's head, from PERCY.head_centre() at the seat
+FEET = (895, 712)          # between his dangling feet and the pedals they can't reach
+TWO_SHOT = (1180, 470)     # Percy and the Model
+MODEL = (1390, 365)
+
+
+def shots(ctx):
+    """Coverage for the heart-to-heart: (start, focus, zoom, where the focus sits on screen,
+    seconds to move there; 0 is a cut)."""
+    c = ctx.cue
+    return [
+        (0.0, CENTRE, 1.0, CENTRE, 0),
+        (c("L11") - 0.2, (960, 430), 1.3, (870, 480), 3.0),           # creep in through the sigh
+        (c("L12"), FACE, 1.75, (900, 440), c("L12.end") - c("L12")),  # ...all the way to his face
+        (c("L13") - 0.1, TWO_SHOT, 1.12, (960, 500), 0),              # cut: the Model apologises
+        (c("L14") - 0.15, CENTRE, 1.0, CENTRE, 0.3),                  # snap wide for the outburst
+        (c("L15") - 0.25, FEET, 2.1, (960, 600), 0),                  # cut: feet dangling over pedals
+        (c("L16") - 0.1, TWO_SHOT, 1.12, (960, 500), 0),              # cut: the Model has an idea
+        (c("L16") + 2.0, (1300, 430), 1.3, (1000, 480), 4.0),         # drift toward her as she thinks
+        (c("L17") - 0.12, FACE, 2.0, (860, 480), 0),                  # cut: "You're asking me?"
+        (c("L18") - 0.12, MODEL, 2.2, (1000, 520), 0),                # cut: "I'm asking you."
+        (c("L19") - 0.25, (1010, 470), 1.4, (900, 520), 0),           # cut: counting on his feathers
+        (c("L19") + 1.0, (1010, 450), 1.55, (900, 520), 9.0),
+        (c("L20") - 0.2, (1150, 500), 1.05, CENTRE, 1.5),             # ease out to see her sketches
+        (c("L21") - 0.2, CENTRE, 1.0, CENTRE, 1.2),                   # wide for "hold on to something"
+    ]
+
+
+def camera(ctx):
+    t = ctx.t
+    seq = shots(ctx)
+    _, focus, zoom, anchor, _ = seq[0]
+    for t0, f, z, a, move in seq[1:]:
+        if t < t0:
+            break
+        u = 1.0 if move <= 0 else ease_in_out(clamp((t - t0) / move))
+        focus = (lerp(focus[0], f[0], u), lerp(focus[1], f[1], u))
+        zoom = lerp(zoom, z, u)
+        anchor = (lerp(anchor[0], a[0], u), lerp(anchor[1], a[1], u))
+    return focus, zoom, anchor
+
+
+def _model(canvas, ctx):
     t = ctx.t
     c = ctx.cue
     # drifts closer and dimmer when it apologises, brighter when it offers to help

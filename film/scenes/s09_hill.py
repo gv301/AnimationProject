@@ -19,7 +19,7 @@ from .common import PERCY, Motion, blink, keyed, riding_pose, draw_rider, rider_
 from .locations import sea_x_under
 
 NAME = "s09_hill"
-LOOK = {"grain": 0.9, "vignette": 0.75}
+LOOK = {"grain": 0.9, "vignette": 0.75, "grade": "sunset", "bloom": 0.6, "threshold": 0.72, "tint": (1.0, 0.84, 0.62)}
 
 BEATS = [
     Mark("climb"), Wait(2.6), Mark("crest"), Wait(1.3), Say("L39", gap=0.0), Wait(0.9),

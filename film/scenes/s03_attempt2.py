@@ -13,7 +13,7 @@ from . import crude
 from .common import draw_page, blink
 
 NAME = "s03_attempt2"
-LOOK = {"grain": 0.5, "vignette": 0.25}
+LOOK = {"grain": 0.5, "vignette": 0.25, "grade": "page", "paper": 0.32}
 
 BEATS = [
     Mark("draw"), Wait(1.7), Mark("turn"), Wait(0.9),

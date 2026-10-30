@@ -19,7 +19,7 @@ from .locations import sea_x_under
 from .s10_flight import wing_cycle, FLY_MID
 
 NAME = "s11_beach"
-LOOK = {"grain": 0.9, "vignette": 0.8}
+LOOK = {"grain": 0.9, "vignette": 0.8, "grade": "sunset", "bloom": 0.9, "threshold": 0.62, "tint": (1.0, 0.8, 0.62)}
 
 BEATS = [
     Mark("land"), Wait(2.6), Say("L53", gap=0.2), Say("L54", gap=0.6), Wait(1.0), Say("L55", gap=0.3),

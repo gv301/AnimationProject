@@ -9,7 +9,7 @@ import math
 import numpy as np
 import skia
 
-from . import gfx
+from . import gfx, post
 from .core import W, H, FPS, clamp, invlerp, rand
 from .timeline import Takes, Timeline
 
@@ -96,7 +96,16 @@ class Film:
         canvas.save()
         scene.module.draw(canvas, ctx)
         canvas.restore()
-        look = getattr(scene.module, "LOOK", {})
+        look = dict(getattr(scene.module, "LOOK", {}))
+        if hasattr(scene.module, "look"):
+            look.update(scene.module.look(ctx))
+        if look.get("paper", 0) > 0:
+            post.paper(canvas, look["paper"])
+        if look.get("bloom", 0) > 0:
+            post.bloom(canvas, look["bloom"], look.get("threshold", 0.72), look.get("tint", (1.0, 1.0, 1.0)),
+                       look.get("wide", 1.0))
+        for name, amount in look.get("grades", [(look["grade"], 1.0)] if look.get("grade") else []):
+            post.grade(canvas, name, amount)
         self.post(canvas, T, look.get("grain", 1.0), look.get("vignette", 1.0))
 
     # film look: gentle vignette and moving grain

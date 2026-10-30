@@ -18,7 +18,7 @@ from .common import PERCY, Motion, blink, keyed, riding_pose, draw_rider, rider_
 from .locations import sea_x_under
 
 NAME = "s08_ride"
-LOOK = {"grain": 0.8, "vignette": 0.6}
+LOOK = {"grain": 0.8, "vignette": 0.6, "grade": "day", "bloom": 0.45, "threshold": 0.8}
 
 BEATS = [
     Mark("bell"), Wait(2.0), Say("L36", gap=0.0), Say("L37", gap=0.3), Wait(1.0), Mark("fish"),

@@ -18,7 +18,7 @@ from .common import PERCY, Motion, blink, keyed, riding_pose, draw_rider, rider_
 from .locations import coast, hedge_back, hedge_front
 
 NAME = "s07_learning"
-LOOK = {"grain": 0.8, "vignette": 0.6}
+LOOK = {"grain": 0.8, "vignette": 0.6, "grade": "day", "bloom": 0.45, "threshold": 0.8}
 
 BEATS = [
     Wait(0.9), Say("L28", gap=0.0), Mark("push"), Wait(2.4), Mark("crash"), Wait(0.9),

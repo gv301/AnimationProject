@@ -12,7 +12,7 @@ from ..timeline import Say, Wait, Mark
 from .common import draw_page, ease_pop, crude_paint, INK, blink
 
 NAME = "s02_attempt1"
-LOOK = {"grain": 0.5, "vignette": 0.25}
+LOOK = {"grain": 0.5, "vignette": 0.25, "grade": "page", "paper": 0.32}
 
 POP = 0.28            # seconds between shapes popping in
 ORDER = ["rear", "front", "frame", "seat", "bars", "body", "neck", "head", "beak", "eye", "legs"]

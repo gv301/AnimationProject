@@ -13,7 +13,7 @@ from . import crude
 from .common import draw_page, blink, ease_pop
 
 NAME = "s04_montage"
-LOOK = {"grain": 0.5, "vignette": 0.25}
+LOOK = {"grain": 0.5, "vignette": 0.25, "grade": "page", "paper": 0.32}
 
 GAGS = [("g1", 3, "square"), ("g2", 17, "spaghetti"), ("g3", 62, "sixlegs"), ("g4", 211, "duck"),
         ("g5", 803, "lowpoly"), ("g6", 1999, "fishwheels"), ("g7", 3311, "riding_me")]

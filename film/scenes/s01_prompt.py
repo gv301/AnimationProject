@@ -11,7 +11,7 @@ from ..core import W, H, clamp, ease_out, ease_in_out, lerp, rand, rand_range, s
 from ..timeline import Say, Wait, Mark
 
 NAME = "s01_prompt"
-LOOK = {"grain": 0.6, "vignette": 0.6}
+LOOK = {"grain": 0.6, "vignette": 0.6, "grade": "ui", "bloom": 0.9, "threshold": 0.5}
 
 PROMPT = "Generate an SVG of a pelican riding a bicycle"
 REPLY = "Sure! Here's an SVG of a pelican riding a bicycle:"

@@ -8,14 +8,14 @@ import skia
 
 from .. import bicycle as bk
 from .. import gfx
-from ..core import W, H, clamp, ease_in_out, ease_out, lerp, smoothstep
+from ..core import W, H, clamp, ease_in_out, ease_out, lerp, rand, smoothstep
 from ..pelican import Look
 from ..timeline import Say, Wait, Mark
 from .common import PAPER, INK, draw_page, riding_pose, draw_rider
 from .locations import title_card
 
 NAME = "s12_credits"
-LOOK = {"grain": 0.6, "vignette": 0.4}
+LOOK = {"grain": 0.6, "vignette": 0.4, "grade": "page", "paper": 0.32}
 
 BEATS = [
     Mark("title"), Wait(3.2), Mark("credits"), Wait(9.5), Mark("post"), Wait(1.2), Mark("wobble"),
@@ -25,12 +25,16 @@ BEATS = [
 CREDITS = [
     ("big", "Attempt 4,818"),
     ("gap", ""),
-    ("role", "Percy", "voiced with Breeze TTS 2"),
-    ("role", "The Model", "voiced with Breeze TTS 2"),
-    ("role", "Gus", "voiced with Breeze TTS 2"),
+    ("role", "Percy", "voice designed with ElevenLabs"),
+    ("role", "The Model", "voice designed with ElevenLabs"),
+    ("role", "Gus", "voice designed with ElevenLabs"),
+    ("small", "Performed with ElevenLabs v4"),
     ("gap", ""),
-    ("line", "Written, designed, animated, scored and mixed in code."),
-    ("line", "Every frame drawn with Skia. Every note and sound synthesized in numpy."),
+    ("role", "Score", "ElevenLabs Music"),
+    ("role", "Sound", "ElevenLabs sound effects and a little physics"),
+    ("gap", ""),
+    ("line", "Written, designed, animated and mixed in code."),
+    ("line", "Every frame drawn with Skia."),
     ("gap", ""),
     ("small", "Fonts: Fraunces, Inter, JetBrains Mono (SIL Open Font License)"),
     ("small", "Made with Claude Code"),
@@ -67,9 +71,9 @@ def _title_and_credits(canvas, ctx):
     dark = smoothstep(c["credits"], c["credits"] + 1.0, t)
     if dark <= 0:
         return
-    canvas.drawRect(skia.Rect.MakeWH(W, H), gfx.fill("#16141c", dark))
+    _night(canvas, t, dark)
     scroll = (t - c["credits"]) / (c["post"] - c["credits"])
-    y = lerp(H + 60, -760, scroll)
+    y = lerp(H + 60, -420, scroll)
     for item in CREDITS:
         kind = item[0]
         if kind == "big":
@@ -89,6 +93,44 @@ def _title_and_credits(canvas, ctx):
             y += 48
         else:
             y += 50
+
+
+def look(ctx):
+    """Paper for the title, a night sky (and its glow) behind the credits."""
+    c = ctx.cues
+    dark = smoothstep(c["credits"], c["credits"] + 1.0, ctx.t) * (1 - smoothstep(c["post"] - 0.3, c["post"], ctx.t))
+    if dark > 0.5:
+        return {"paper": 0.0, "grade": "night", "bloom": 0.7, "threshold": 0.55, "vignette": 0.7}
+    return {"paper": 0.32 * (1 - 2 * dark)}
+
+
+def _night(canvas, t, alpha):
+    """A starry night over a dark sea, with the moon laying a path of light."""
+    sky = gfx.linear((0, 0), (0, H), ["#070b1f", "#1a1736", "#3a2747"], [0.0, 0.62, 0.8])
+    paint = gfx.fill(shader=sky)
+    paint.setAlphaf(alpha)
+    canvas.drawRect(skia.Rect.MakeWH(W, H), paint)
+    canvas.drawRect(skia.Rect.MakeLTRB(0, 0.8 * H, W, H), gfx.fill("#120f22", alpha))
+    stars = skia.Path()
+    bright = skia.Path()
+    for i in range(170):
+        x = rand(i, "sx") * W
+        y = rand(i, "sy") ** 1.4 * 0.76 * H
+        r = 0.6 + 1.6 * rand(i, "sr") ** 3
+        tw = 0.55 + 0.45 * math.sin(t * (1.5 + 2.5 * rand(i, "sf")) + 6.3 * rand(i, "sp"))
+        (bright if r > 1.6 else stars).addCircle(x, y, r * (0.7 + 0.3 * tw))
+    canvas.drawPath(stars, gfx.fill("#d9dcff", 0.75 * alpha))
+    canvas.drawPath(bright, gfx.fill("#ffffff", alpha))
+    mx, my = 1720, 150
+    canvas.drawCircle(mx, my, 40, gfx.fill("#fff4dc", alpha))
+    glints = skia.Path()
+    for k in range(60):
+        depth = rand(k, "gd")
+        yy = 0.8 * H + 4 + depth ** 1.6 * 0.19 * H
+        half = (3 + 26 * depth) * (0.5 + 0.5 * math.sin(t * (1.2 + rand(k, "gs")) + 6.3 * rand(k, "gp")))
+        xx = mx + (rand(k, "gx") - 0.5) * (30 + 220 * depth)
+        glints.addRect(skia.Rect.MakeLTRB(xx - half, yy, xx + half, yy + 1.5 + depth))
+    canvas.drawPath(glints, gfx.fill("#ffe9b8", 0.35 * alpha))
 
 
 def _post(canvas, ctx):
