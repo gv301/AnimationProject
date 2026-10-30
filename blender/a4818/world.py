@@ -239,9 +239,16 @@ def water_material():
     return m
 
 
-def far_sea(col, z=-0.55, size=8000.0):
-    """Beyond the simulated tile the sea continues as a reflective plane to the horizon."""
-    o = lib.plane("far_sea", (size, size), col, water_material(), loc=(0, size / 2 - 20, z))
+def far_sea(col, ocean_obj, inner=(-38.0, 358.0), z=-0.05, size=8000.0):
+    """The sea beyond the simulated tile: a ring around it, parented to it, so the two always meet.
+
+    (The Ocean modifier grows its tiles from -size/2 at the origin towards +X/+Y.)"""
+    a, b = inner
+    h = size / 2
+    verts = [(-h, -h, 0), (h, -h, 0), (h, h, 0), (-h, h, 0), (a, a, 0), (b, a, 0), (b, b, 0), (a, b, 0)]
+    faces = [(0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
+    o = lib.mesh_object("far_sea", verts, faces, col, water_material(), smooth=False, parent=ocean_obj)
+    o.location = (0, 0, z)
     return o
 
 

@@ -265,6 +265,28 @@ def town(col, mats):
                 wz = 1.6 + row * 2.2
                 lib.box(f"win_{k}_{row}_{col_i}", (0.7, 0.08, 1.0), col, mats.glass, loc=(wx, 15.96, wz))
                 lib.box(f"winframe_{k}_{row}_{col_i}", (0.86, 0.06, 1.16), col, mats.white, loc=(wx, 15.99, wz))
+        if rand("awning", k) < 0.6:
+            stripe = mats.flags[k % len(mats.flags)]
+            lib.mesh_object(f"awning_{k}", [(x + 0.4, 15.95, 2.9), (x + w - 0.4, 15.95, 2.9),
+                                             (x + w - 0.4, 14.9, 2.45), (x + 0.4, 14.9, 2.45)],
+                            [(0, 1, 2, 3)], col, stripe, smooth=False)
+        if h > 6.5 and rand("balcony", k) < 0.6:
+            bx = x + w / 2
+            lib.box(f"balcony_{k}", (1.8, 0.7, 0.12), col, mats.stone, loc=(bx, 15.6, 4.0))
+            for r in range(6):
+                lib.cylinder(f"balcony_rail_{k}_{r}", (bx - 0.85 + r * 0.34, 15.3, 4.06),
+                             (bx - 0.85 + r * 0.34, 15.3, 4.75), 0.015, col, mats.metal, segs=6)
+            lib.cylinder(f"balcony_top_{k}", (bx - 0.9, 15.3, 4.75), (bx + 0.9, 15.3, 4.75), 0.02, col, mats.metal,
+                         segs=6)
+        for row in range(int(h // 2.2)):
+            if rand("flowerbox", k, row) < 0.45:
+                fx = x + 0.8
+                fz = 1.6 + row * 2.2 - 0.62
+                lib.box(f"flowerbox_{k}_{row}", (0.75, 0.22, 0.16), col, mats.wood, loc=(fx, 15.85, fz))
+                for q in range(4):
+                    lib.ellipsoid(f"bloom_{k}_{row}_{q}", (0.07, 0.07, 0.06), col,
+                                  mats.flags[(k + row + q) % len(mats.flags)], segs=8, rings=5,
+                                  loc=(fx - 0.27 + q * 0.18, 15.82, fz + 0.12))
         x += w + 0.15
         k += 1
     # bunting strung between poles along the quay
@@ -340,7 +362,10 @@ def hill(col, mats, course):
             elif y > 0:
                 z = base - 0.05 - (y - 2.2) * (0.35 + 0.25 * math.sin(x * 0.05)) - max(0.0, x - x_pier) * 0.4
             else:
-                z = base - 0.05 + (-y - 2.2) * 0.18 + 1.5 * math.sin(x * 0.07 + y * 0.1)
+                inland = -y - 2.2
+                z = base - 0.05 + inland * 0.12 + 1.5 * math.sin(x * 0.07 + y * 0.1) \
+                    + min(1.0, inland / 25.0) * (5.0 * math.sin(x * 0.021 + 1.3) * math.cos(y * 0.027) +
+                                                 3.0 * math.sin(x * 0.047 - y * 0.035))
             # past the start of the pier every part of the headland slopes down into the sea
             z -= max(0.0, x - (x_pier - 8.0)) * (0.55 if abs(y) > 2.2 else 0.0)
             verts.append((x, y, max(z, -3.0)))
@@ -350,6 +375,23 @@ def hill(col, mats, course):
             faces.append((a, a + ny + 1, a + ny + 2, a + 1))
     lib.mesh_object("hillside", verts, faces, col, mats.grass, smooth=True)
     _fence("hill_rail", x0, x_pier - 2, 2.6, col, mats, ground=g, spacing=3.0)
+    # trees scattered over the rolling hinterland
+    hz = {}
+    for (vx, vy, vz) in verts:
+        hz[(round(vx, 1), round(vy, 1))] = vz
+    def land_z(x, y):
+        i = min(nx, max(0, round((x - x0) / ((x_pier + 30 - x0) / nx))))
+        j = min(ny, max(0, round((y + 180) / (240 / ny))))
+        return verts[i * (ny + 1) + j][2]
+    for k in range(46):
+        x = x0 + 10 + (x_pier - x0 - 20) * rand("hilltree", k)
+        y = -14 - 150 * rand("hilltree", k, "y") ** 1.3
+        z = land_z(x, y)
+        if rand("hilltree", k, "kind") < 0.45:
+            _cypress(f"hill_cypress_{k}", (x, y, z), col, mats, h=5 + 4 * rand("hilltree", k, "h"))
+        else:
+            _round_tree(f"hill_tree_{k}", (x, y, z), col, mats, r=1.3 + 1.0 * rand("hilltree", k, "r"))
+    del hz
     # the warning sign at the crest
     xs = HILL_X + K * course["x_crest"] - 1.0
     lib.cylinder("sign_post", (xs, -2.6, g(xs)), (xs, -2.6, g(xs) + 2.2), 0.04, col, mats.metal)

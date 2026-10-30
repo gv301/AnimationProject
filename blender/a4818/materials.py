@@ -67,16 +67,18 @@ def surface(name, color, rough=0.5, metal=0.0, sss=0.0, sss_radius=(0.3, 0.12, 0
     m.diffuse_color = (*c, 1)
     if bump:
         scale, strength_b, kind = bump
-        tex = nd.new("ShaderNodeTexWave" if kind == "wave" else "ShaderNodeTexNoise")
+        tex = nd.new({"wave": "ShaderNodeTexWave", "voronoi": "ShaderNodeTexVoronoi"}.get(kind, "ShaderNodeTexNoise"))
         tex.inputs["Scale"].default_value = scale
-        if kind == "wave":
+        if kind == "voronoi":
+            pass
+        elif kind == "wave":
             tex.inputs["Distortion"].default_value = 3.0
             tex.inputs["Detail"].default_value = 3.0
         else:
             tex.inputs["Detail"].default_value = 6.0
         b = nd.new("ShaderNodeBump")
         b.inputs["Strength"].default_value = strength_b
-        ln.new(tex.outputs["Fac"], b.inputs["Height"])
+        ln.new(tex.outputs["Distance" if kind == "voronoi" else "Fac"], b.inputs["Height"])
         ln.new(b.outputs["Normal"], p.inputs["Normal"])
     if mottle:
         c1, scale = mottle

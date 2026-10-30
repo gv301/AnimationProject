@@ -108,8 +108,8 @@ def build(scene, film):
                              (sets.HILL_X - 30, sets.HILL_X + 60, -2.4, -14.0, hill.z)], count=500)
     sets.bushes(env, mats, [sets.HILL_X - 30 + 6.5 * k for k in range(22)], hill.z, (-16.0, -4.0), "hillbush")
     sets.bushes(env, mats, [sets.COAST_X - 30 + 7.0 * k for k in range(18)], flat, (-16.0, -6.0), "coastbush")
-    sea, ocean = world.ocean(env, size=80, resolution=12, loc=(0, 90, -0.25), repeat=5)
-    world.far_sea(env)
+    sea, ocean = world.ocean(env, size=OCEAN_SIZE, resolution=12, loc=(0, 0, -0.25), repeat=OCEAN_REPEAT)
+    world.far_sea(env, sea, inner=(-OCEAN_SIZE / 2 + 2, OCEAN_SIZE * OCEAN_REPEAT - OCEAN_SIZE / 2 - 2))
     world.haze(env, centre=(600, 0, 0), size=(1800.0, 900.0, 140.0))
     sky, _, sun = world.sky(scene, 9.0, SUN_DAY)
     world.setup_render(scene)
@@ -590,8 +590,10 @@ SKY = {   # scene: (sun elevation at start, at end, azimuth)
     "s10_flight": (3.2, 2.6, SUN_SET),
     "s11_beach": (2.4, 0.8, SUN_SET),
 }
-OCEAN = {"s06_transform": (0, 205), "s07_learning": (10, 205), "s08_ride": (210, 205), "s09_hill": (520, 140),
-         "s10_flight": (560, 140), "s11_beach": (1150, 205)}
+OCEAN_SIZE, OCEAN_REPEAT = 80, 5
+# where each scene's simulated sea is centred (the tile spans OCEAN_SIZE * OCEAN_REPEAT metres)
+OCEAN = {"s06_transform": (10, 208), "s07_learning": (10, 208), "s08_ride": (210, 203), "s09_hill": (560, 100),
+         "s10_flight": (600, 120), "s11_beach": (1150, 205)}
 
 
 def animate_world(film, sea, sky, sun):
@@ -600,8 +602,9 @@ def animate_world(film, sea, sky, sun):
     for r in film.rows:
         sc = r["scene"]
         ocean_t.append(r["tw"] + 7.0)
-        x, y = OCEAN[sc]
-        ocean_loc.append((x, y, -0.25))
+        cx, cy = OCEAN[sc]
+        shift = OCEAN_SIZE * OCEAN_REPEAT / 2 - OCEAN_SIZE / 2
+        ocean_loc.append((cx - shift, cy - shift, -0.25))
     lib.bake(sea, 'modifiers["Ocean"].time', fr, ocean_t)
     lib.bake(sea, "location", fr, ocean_loc, interp="CONSTANT")
     owner_e, path_e = world.sky_socket_or_prop(sky, "sun_elevation")

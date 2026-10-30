@@ -76,7 +76,7 @@ class Percy:
         self.body_pivot = lib.empty("percy_body", col, parent=self.root, size=0.3)
         white = M.surface("percy_feathers", "#f7f3ec", rough=0.62, sheen=0.55, sheen_tint=(1.0, 0.95, 0.9),
                           sss=0.08, sss_radius=(0.5, 0.3, 0.2), sweep=sweep, flat="#ffffff",
-                          bump=(55.0, 0.18, "wave"))
+                          bump=(38.0, 0.22, "voronoi"))
         cream = M.surface("percy_face", "#f7dcc0", rough=0.5, sheen=0.3, sss=0.15, sweep=sweep, flat="#fbe6cf")
         black = M.surface("percy_primaries", "#17161a", rough=0.45, sheen=0.5, sheen_tint=(0.6, 0.65, 0.8),
                           sweep=sweep, flat="#222126", bump=(80.0, 0.12, "wave"))
@@ -148,11 +148,11 @@ class Percy:
                              loc=(0.085, 0.0, 0.0), parent=self.head)
         self._m(face)
         # crest: the scruffy tuft of the 2D design
-        for k in range(5):
-            a = -0.5 + 0.25 * k
-            base = Vector((-0.03 - 0.02 * k, 0.012 * (k - 2), 0.095))
-            mid = base + Vector((-0.05, 0.01 * (k - 2), 0.06 + 0.012 * (2 - abs(k - 2))))
-            tipp = mid + Vector((-0.045, 0.012 * (k - 2), 0.012 - 0.02 * abs(a)))
+        for k in range(8):
+            a = -0.5 + 0.14 * k
+            base = Vector((-0.02 - 0.014 * k, 0.009 * (k - 3.5), 0.11))
+            mid = base + Vector((-0.05, 0.008 * (k - 3.5), 0.065 + 0.01 * (3.5 - abs(k - 3.5))))
+            tipp = mid + Vector((-0.05, 0.01 * (k - 3.5), 0.015 - 0.02 * abs(a)))
             self._m(lib.tube(f"percy_crest_{k}", [base, mid, tipp], [0.012, 0.007, 0.002], c, white, segs=8,
                              parent=self.head))
         # upper mandible: long, flattened, with a hooked tip
