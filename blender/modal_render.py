@@ -16,8 +16,7 @@ finished frames come back to build/3d/ as high-quality JPEGs, and frames already
 and the cloud with --start/--end, and an interrupted run resumes.
 """
 
-from __future__ import annotations
-
+# no `from __future__ import annotations`: Modal reads the parameter types off the class at runtime
 import time
 from pathlib import Path
 
@@ -97,7 +96,7 @@ class Renderer:
 
 
 @app.local_entrypoint()
-def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080, chunk: int = 24,
+def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080, chunk: int = 12,
          probe: bool = False, gpu: str = GPU, price_per_hour: float = 0.0):
     price_per_hour = price_per_hour or PRICE.get(gpu, 2.0)
     out = HERE.parent / "build" / "3d"

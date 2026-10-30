@@ -58,6 +58,10 @@ modal setup
 modal run blender/modal_render.py --probe
 ```
 
+On Windows, if `modal` isn't found after `pip install modal`, type `python -m modal` in its
+place. In Git Bash, run `export PYTHONUTF8=1` first as well; otherwise Modal stops with a
+UnicodeEncodeError the first time it prints a ✓.
+
 Then render everything, or a range: `modal run blender/modal_render.py --samples 64`, or add
 `--start 3481 --end 5000`. Frames land in `build/3d/` next to any you render locally, and
 frames already there are skipped. That means you can split the film between your own GPU and
