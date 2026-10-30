@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.part
+build/
+dialogue/_preview_all.wav
+dialogue/_server.log
