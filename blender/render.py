@@ -75,7 +75,7 @@ def main():
         frames = list(range(a, b + 1, args.every))
     for f in frames:
         path = out / f"f_{f:05d}.png"
-        if path.exists() and not args.stills:
+        if (path.exists() or path.with_suffix(".jpg").exists()) and not args.stills:
             continue
         scene.frame_set(f)
         r.filepath = str(path)

@@ -41,6 +41,28 @@ To trade quality for speed: `--samples 64` roughly halves the time and still den
 cleanly; `--engine EEVEE` takes about 2–4 hours in total. `--every 6 --res 540` gives a quick
 preview of every sixth frame.
 
+### Rendering on Modal's cloud GPUs
+
+`blender/modal_render.py` renders the same frames on up to 20 cloud GPUs at once, so the
+render takes about an hour of waiting instead of a day or two. Install Modal and log in, then
+run the probe first. It renders six frames for well under a dollar, then prints the seconds
+per frame and an estimate for the whole job:
+
+```bash
+pip install modal
+```
+```bash
+modal setup
+```
+```bash
+modal run blender/modal_render.py --probe
+```
+
+Then render everything, or a range: `modal run blender/modal_render.py --samples 64`, or add
+`--start 3481 --end 5000`. Frames land in `build/3d/` next to any you render locally, and
+frames already there are skipped. That means you can split the film between your own GPU and
+the cloud to stay within a credit budget.
+
 Frames to know: 3526 is the page tearing open, 3844 Percy admiring his new feathers, 5873
 the harbour town, 6156 the crest of the hill, 6791 the pier at sunset, 7193 the wings
 opening, and 7884 the beach.

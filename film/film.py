@@ -97,8 +97,9 @@ class Film:
         f = int(round(T * self.fps))
         if self._img3d[0] == f:
             return self._img3d[1]
-        path = self.frames3d / f"f_{f:05d}.png"
-        img = skia.Image.open(str(path)) if path.is_file() else None
+        path = next((p for p in (self.frames3d / f"f_{f:05d}.png", self.frames3d / f"f_{f:05d}.jpg")
+                     if p.is_file()), None)
+        img = skia.Image.open(str(path)) if path else None
         self._img3d = (f, img)
         return img
 
