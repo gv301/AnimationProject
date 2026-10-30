@@ -3,8 +3,9 @@
   pip install modal
   modal setup
   modal run blender/modal_render.py --probe
-  modal run blender/modal_render.py --samples 64
-  modal run blender/modal_render.py --start 3481 --end 5000
+  modal run blender/modal_render.py --probe --gpu RTX-PRO-6000
+  modal run blender/modal_render.py --gpu RTX-PRO-6000 --samples 64
+  modal run blender/modal_render.py --start 6017 --end 8255
 
 The probe renders six representative frames (well under a dollar), prints the time per frame
 and estimates the cost of the whole job, so you can pick samples or a frame range that fits
@@ -24,6 +25,10 @@ import modal
 
 HERE = Path(__file__).resolve().parent
 GPU = "L40S"
+# Modal's prices per GPU-hour. Cycles wants RT cores: the L40S and RTX PRO 6000 have them; the
+# A100/H100/H200/B200 compute cards don't, and render slower per dollar.
+PRICE = {"L40S": 1.95, "RTX-PRO-6000": 3.03, "A10G": 1.10, "L4": 0.80, "T4": 0.59, "A100-40GB": 2.10,
+         "A100-80GB": 2.50, "H100": 3.95, "H200": 4.54, "B200": 6.25}
 TOTAL_FRAMES = 4775
 PROBE = [3526, 3844, 5873, 6156, 7193, 7884]
 
@@ -88,7 +93,8 @@ class Renderer:
 
 @app.local_entrypoint()
 def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080, chunk: int = 12,
-         probe: bool = False, price_per_hour: float = 2.0):
+         probe: bool = False, gpu: str = GPU, price_per_hour: float = 0.0):
+    price_per_hour = price_per_hour or PRICE.get(gpu, 2.0)
     out = HERE.parent / "build" / "3d"
     out.mkdir(parents=True, exist_ok=True)
     done = {int(p.stem[2:]) for p in out.glob("f_*.*")}
@@ -97,8 +103,9 @@ def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080
         print("nothing to render: every frame in the range is already in build/3d")
         return
     chunks = [frames[i:i + chunk] for i in range(0, len(frames), chunk)]
-    print(f"rendering {len(frames)} frames on up to 20 {GPU} GPUs ({samples} samples, {res}p)...")
-    renderer = Renderer(samples=samples, res=res)
+    print(f"rendering {len(frames)} frames on up to 20 {gpu} GPUs ({samples} samples, {res}p)...")
+    cls = Renderer.with_options(gpu=gpu) if hasattr(Renderer, "with_options") else Renderer
+    renderer = cls(samples=samples, res=res)
     secs, count, started = 0.0, 0, time.monotonic()
     for batch in renderer.render.map(chunks):
         for f, data, s in batch:
@@ -109,6 +116,6 @@ def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080
               f"{(time.monotonic() - started) / 60:.1f} min elapsed", flush=True)
     per = secs / max(1, count)
     hours = TOTAL_FRAMES * per / 3600
-    print(f"\n{per:.1f} s per frame on {GPU} at {samples} samples. All {TOTAL_FRAMES} frames: about "
-          f"{hours:.0f} GPU-hours, roughly ${hours * price_per_hour:.0f} at ${price_per_hour:.2f}/hour "
-          f"(check modal.com/pricing), plus about a minute of start-up per container.")
+    print(f"\n{per:.1f} s per frame on {gpu} at {samples} samples. All {TOTAL_FRAMES} frames: about "
+          f"{hours:.0f} GPU-hours, roughly ${hours * price_per_hour:.0f} at ${price_per_hour:.2f}/hour, "
+          f"plus about a minute of start-up per container. At 64 samples, expect a bit over half that.")
