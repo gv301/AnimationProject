@@ -69,6 +69,8 @@ class Renderer:
                 continue
         scene.render.engine = "CYCLES"
         scene.cycles.device = "GPU"
+        # keep the static scenery (BVH, textures) loaded between frames: each container renders a run
+        scene.render.use_persistent_data = True
         scene.cycles.samples = self.samples
         r = scene.render
         r.resolution_y = self.res
@@ -92,7 +94,7 @@ class Renderer:
 
 
 @app.local_entrypoint()
-def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080, chunk: int = 12,
+def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080, chunk: int = 24,
          probe: bool = False, gpu: str = GPU, price_per_hour: float = 0.0):
     price_per_hour = price_per_hour or PRICE.get(gpu, 2.0)
     out = HERE.parent / "build" / "3d"

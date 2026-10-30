@@ -61,6 +61,7 @@ def main():
     r.image_settings.color_depth = "8"
     if args.engine == "CYCLES":
         scene.cycles.samples = args.samples or 128
+        r.use_persistent_data = True
         print("cycles device:", enable_gpu())
     else:
         scene.eevee.taa_render_samples = args.samples or 128
