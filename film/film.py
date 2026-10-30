@@ -10,7 +10,7 @@ import numpy as np
 import skia
 
 from . import gfx, post
-from .core import W, H, FPS, clamp, invlerp, rand
+from .core import W, H, FPS, clamp, invlerp, rand, smoothstep
 from .timeline import Takes, Timeline
 
 SCENES = [
@@ -85,6 +85,22 @@ class Film:
         self.takes = Takes()
         self.timeline = Timeline(self.modules, self.takes)
         self._grain = None
+        self.frames3d = None          # folder of Blender frames (f_<frame>.png) for the 3D half
+        self._img3d = (None, None)
+
+    THREE_D = ("s07_learning", "s08_ride", "s09_hill", "s10_flight", "s11_beach")
+
+    def frame3d(self, T):
+        """The Blender frame for this moment, if a 3D render is being spliced in."""
+        if self.frames3d is None:
+            return None
+        f = int(round(T * self.fps))
+        if self._img3d[0] == f:
+            return self._img3d[1]
+        path = self.frames3d / f"f_{f:05d}.png"
+        img = skia.Image.open(str(path)) if path.is_file() else None
+        self._img3d = (f, img)
+        return img
 
     @property
     def duration(self):
@@ -93,6 +109,19 @@ class Film:
     def draw(self, canvas, T):
         scene, t = self.timeline.scene_at(T)
         ctx = Ctx(self, scene, t, T, self.fps)
+        img = self.frame3d(T) if scene.name in self.THREE_D else None
+        if img is not None:
+            lineart = scene.cues.get("lineart")
+            fade = 0.0 if lineart is None else smoothstep(lineart, lineart + 1.2, t)
+            if fade > 0:
+                canvas.save()
+                scene.module.draw(canvas, ctx)
+                canvas.restore()
+            paint = skia.Paint()
+            paint.setAlphaf(1.0 - fade)
+            canvas.drawImageRect(img, skia.Rect.MakeWH(W, H), skia.SamplingOptions(skia.FilterMode.kLinear), paint)
+            self.post(canvas, T, 0.5, 0.3)
+            return
         canvas.save()
         scene.module.draw(canvas, ctx)
         canvas.restore()

@@ -54,6 +54,9 @@ def palette(ctx):
 
 
 def draw(canvas, ctx):
+    img = ctx.film.frame3d(ctx.T)
+    if img is not None:
+        return _draw_3d(canvas, ctx, img)
     t = ctx.t
     cam = camera(ctx)
     pal = palette(ctx)
@@ -71,6 +74,11 @@ def draw(canvas, ctx):
             _tear_edge(canvas, ctx, tear, peel)
     _rider(canvas, ctx, cam, pal)
     _model(canvas, ctx, cam)
+    _title(canvas, ctx)
+
+
+def _title(canvas, ctx):
+    t = ctx.t
     if t > ctx.cue("title"):
         u = ctx.between("title", ctx.cue("title") + 2.4)
         fade = 1 - smoothstep(ctx.dur - 0.8, ctx.dur, t)
@@ -109,6 +117,29 @@ def _tear_edge(canvas, ctx, tear, peel):
 def _geometry(ctx):
     g = ease_in_out(ctx.between(ctx.cue("bike") + 0.2, ctx.cue("bike") + 2.6))
     return bk.blend_geometry(bk.ADULT, bk.PERCY, g), g
+
+
+def _draw_3d(canvas, ctx, img):
+    """The Blender version: the page tears open onto the 3D world, which then takes over."""
+    full = skia.Rect.MakeWH(W, H)
+    peel = ctx.between("peel", "world")
+    if peel >= 1:
+        canvas.drawImageRect(img, full, skia.SamplingOptions(skia.FilterMode.kLinear))
+        _title(canvas, ctx)
+        return
+    glow = 1.0 + 1.5 * smoothstep(0, 1, ctx.between("glow", "peel"))
+    draw_page(canvas, "pelican_bicycle.svg", 4817, ctx.t, glow=glow)
+    tear = _tear_path(ctx, peel) if peel > 0 else None
+    canvas.save()
+    if tear is not None:
+        canvas.clipPath(tear, skia.ClipOp.kDifference, True)
+    _rider(canvas, ctx, camera(ctx), palette(ctx))
+    canvas.restore()
+    if tear is not None:
+        with gfx.clipped(canvas, tear):
+            canvas.drawImageRect(img, full, skia.SamplingOptions(skia.FilterMode.kLinear))
+        _tear_edge(canvas, ctx, tear, peel)
+    _model(canvas, ctx, camera(ctx))
 
 
 def _rider(canvas, ctx, cam, pal):

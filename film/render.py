@@ -31,10 +31,12 @@ OUTPUT = ROOT / "output"
 _film = None
 
 
-def _init_worker(fps):
+def _init_worker(fps, frames3d=None):
     global _film
     from .film import Film
     _film = Film(fps)
+    if frames3d:
+        _film.frames3d = Path(frames3d)
 
 
 def _surface(width, height):
@@ -91,6 +93,8 @@ def main():
     parser.add_argument("--crf", type=int, default=16)
     parser.add_argument("--preset", default="medium")
     parser.add_argument("--no-audio", action="store_true")
+    parser.add_argument("--with-3d", type=Path, metavar="DIR",
+                        help="splice in the Blender frames (DIR/f_<frame>.png, see blender/README.md)")
     parser.add_argument("--out", type=Path)
     parser.add_argument("--timeline", action="store_true", help="print the timeline and exit")
     args = parser.parse_args()
@@ -115,7 +119,7 @@ def main():
         stills.mkdir(parents=True, exist_ok=True)
         jobs = [(float(s), width, height, stills / f"still_{float(s):07.2f}.png")
                 for s in args.stills.split(",")]
-        with mp.Pool(min(args.workers, len(jobs)), _init_worker, (args.fps,)) as pool:
+        with mp.Pool(min(args.workers, len(jobs)), _init_worker, (args.fps, args.with_3d)) as pool:
             for path in pool.imap_unordered(render_still, jobs):
                 print("  " + path, flush=True)
         return
@@ -144,7 +148,7 @@ def main():
     print(f"Rendering {total} frames ({t0:.2f}-{t1:.2f} s) at {width}x{height} "
           f"with {args.workers} workers...", flush=True)
     started, done = time.monotonic(), 0
-    with mp.Pool(args.workers, _init_worker, (args.fps,)) as pool:
+    with mp.Pool(args.workers, _init_worker, (args.fps, args.with_3d)) as pool:
         for index, count, _secs in pool.imap_unordered(render_segment, jobs):
             done += count
             elapsed = time.monotonic() - started
@@ -158,7 +162,8 @@ def main():
                     str(listing), "-c", "copy", str(video)], check=True)
 
     OUTPUT.mkdir(exist_ok=True)
-    out = args.out or (OUTPUT / ("attempt_4818.mp4" if (t0, t1) == (0.0, tl.duration)
+    name = "attempt_4818_3d.mp4" if args.with_3d else "attempt_4818.mp4"
+    out = args.out or (OUTPUT / (name if (t0, t1) == (0.0, tl.duration)
                                  else f"preview_{t0:06.1f}-{t1:06.1f}_{height}p.mp4"))
     if args.no_audio:
         shutil.copy(video, out)

@@ -5,3 +5,5 @@ build/
 dialogue/_preview_all.wav
 dialogue/_server.log
 output/preview_*.mp4
+blender/*.blend
+blender/*.blend1
