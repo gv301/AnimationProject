@@ -102,15 +102,17 @@ def ambience(film):
         bed = S.pan(sfx.waves(dur, seed=1, level=1.0), -0.3) + S.pan(sfx.waves(dur, seed=2), 0.3)
     ramp = np.minimum(1, np.arange(len(bed)) / (2.0 * SR))
     ramp[-int(1.2 * SR):] *= np.linspace(1, 0, int(1.2 * SR))
-    events.append(E(start, bed * ramp[:, None], 0.55, 0.0, 0.0))
+    # the surf stays far in the background: soft, and with its hiss rolled off
+    bed = np.stack([S.lowpass(bed[:, c], 3200, order=2) for c in range(2)], axis=1)
+    events.append(E(start, bed * ramp[:, None], 0.1, 0.0, 0.0))
     rng = S.rng("gulls")
     t = start + 2.0
     while t < end - 2:
         call = lambda: kit.hit("gulls", lambda: sfx.gull_call(int(rng.integers(0, 4))), level=-16.0,
                                min_gap=0.25, length=0.7, takes=(1, 2))
-        events.append(E(t, call(), 0.3, float(rng.uniform(-0.8, 0.8)), 0.4))
+        events.append(E(t, call(), 0.15, float(rng.uniform(-0.8, 0.8)), 0.4))
         if rng.random() < 0.5:
-            events.append(E(t + 0.35, call(), 0.2, float(rng.uniform(-0.8, 0.8)), 0.4))
+            events.append(E(t + 0.35, call(), 0.1, float(rng.uniform(-0.8, 0.8)), 0.4))
         t += rng.uniform(4.0, 9.0)
     for name in ("s02_attempt1", "s05_talk"):
         st = scenes[name]
@@ -180,8 +182,6 @@ def scene_events(film):
     # 5. Attempt 4,817: a flap of exasperation, kicking feet, a rising hum for "hold on"
     st, ctx = _ctx(film, "s05_talk")
     flap = lambda seed, dur: kit.hit("wings", lambda: sfx.flap(seed, dur), level=-15.0, min_gap=0.2, length=0.55)
-    ev.append(E(st.start + st.cues["L14"] - 0.1, flap(1, 1.4), 0.6, 0.0, 0.2))
-    ev.append(E(st.start + st.cues["L14.end"] + 0.2, flap(2, 1.2), 0.45, 0.0, 0.2))
     for k in range(5):
         ev.append(E(st.start + st.cues["L15"] + 0.2 + k * 0.35, sfx.whoosh(0.18, 300, 1200, seed=10 + k, peak=0.5),
                     0.18, -0.1, 0.1))

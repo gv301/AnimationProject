@@ -30,6 +30,8 @@ class Cue:
     duck: float = 7.0    # dB it dips under dialogue
 
 
+MUSIC_TRIM = -2.0      # the whole score sits a little further under the voices
+
 CUES = [
     Cue("s01_prompt", "M01.t2", -27, fade_in=0.4),
     Cue("s02_attempt1", "M02.t1", -28, fade_out=0.4, duck=6),
@@ -72,7 +74,7 @@ def render(film, n):
     for c in CUES:
         st = scenes[c.scene]
         x = eleven.cue(c.take)[int(c.trim * SR):].copy()
-        x *= 10 ** ((c.level - _loudness(x)) / 20)
+        x *= 10 ** ((c.level + MUSIC_TRIM - _loudness(x)) / 20)
         end = st.start + (st.cues[c.until] if c.until else st.duration + 3.0)
         length = min(len(x), int((end - st.start - c.at) * SR))
         x = x[:length]

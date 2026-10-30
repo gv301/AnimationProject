@@ -24,11 +24,15 @@ from . import synth as S
 from .synth import SR
 
 LINE_LUFS = -23.0          # every line after levelling
-KEEP = 0.35                # share of a line's own loudness difference that survives levelling
-CAP_UP, CAP_DOWN = 1.5, -4.0
+KEEP = 0.25                # share of a line's own loudness difference that survives levelling
+CAP_UP, CAP_DOWN = 1.0, -3.0
+TARGET_SBR = 11.0          # LU the dialogue must sit above everything else during each line
+MAX_DUCK = 12.5            # dB the clarity stage may take out of music and effects
+CHARACTER_TRIM = {"GUS": 2.0}          # dB: his gravelly, mid-heavy voice reads quieter at equal loudness
+PRESENCE = {"GUS": 0.35, "PERCY": 0.12}  # extra 1.8-5 kHz for intelligibility
 FILM_LUFS = -16.0
 TRUE_PEAK = -1.0           # dBTP
-LEVELLER_ALLOW = 4.0       # LU above the dialogue level before the leveller steps in
+LEVELLER_ALLOW = 3.5       # LU above the dialogue level before the leveller steps in
 SLOWMO_LINES = {"L48", "L49", "L50"}
 MUFFLED_LINES = {"L29": 1100}
 
@@ -134,7 +138,9 @@ def dialogue_bus(film, n):
         x = clips.get(ev.line)
         if x is None:
             continue
-        x = x * 10 ** (gains[ev.line] / 20)
+        x = x * 10 ** ((gains[ev.line] + CHARACTER_TRIM.get(ev.who, 0.0)) / 20)
+        if ev.who in PRESENCE:
+            x = x + S.bandpass(x, 1800, 5000) * PRESENCE[ev.who]
         if ev.line in MUFFLED_LINES:
             x = S.lowpass(x, MUFFLED_LINES[ev.line], order=4) * 1.6
         if ev.who == "MODEL":
@@ -187,6 +193,60 @@ def music_bus(film, n, dia):
         mus = np.pad(mus, ((0, n - len(mus)), (0, 0)))
     mus *= 0.04 / (np.sqrt(np.mean(mus ** 2)) + 1e-9)
     return mus * score.duck_gain(dia, 9.0)[:, None]
+
+
+def _smooth_db(db, attack=0.08, release=0.35, rate=200):
+    """One-pole smoothing of a dB curve (fast to duck, slow to recover), at a control rate."""
+    step = SR // rate
+    ctrl = db[::step].astype(np.float64)
+    ka, kr = math.exp(-1 / (attack * rate)), math.exp(-1 / (release * rate))
+    out = np.empty_like(ctrl)
+    v = 0.0
+    for i, x in enumerate(ctrl):
+        k = ka if x > v else kr
+        v = k * v + (1 - k) * x
+        out[i] = v
+    return np.interp(np.arange(len(db)), np.arange(len(out)) * step, out).astype(np.float32)
+
+
+def clarity(film, dia, bg):
+    """Per-line dialogue-to-background check: wherever music and effects come within TARGET_SBR LU
+    of a line, they are ducked by the shortfall (up to MAX_DUCK) for that line."""
+    n = len(dia)
+    duck = np.zeros(n, dtype=np.float32)
+    rows = []
+    for ev in film.timeline.lines:
+        i = int(ev.start * SR)
+        j = max(int(ev.end * SR), i + int(0.4 * SR))
+        ld, lb = loudness(dia[i:j]), loudness(bg[i:j])
+        need = float(np.clip(TARGET_SBR - (ld - lb), 0.0, MAX_DUCK))
+        rows.append([ev, ld, lb, need])
+        if need > 0:
+            a, b = max(0, i - int(0.15 * SR)), min(n, j + int(0.35 * SR))
+            duck[a:b] = np.maximum(duck[a:b], need)
+    gain = 10 ** (-_smooth_db(duck) / 20)
+    for row in rows:
+        ev = row[0]
+        i = int(ev.start * SR)
+        j = max(int(ev.end * SR), i + int(0.4 * SR))
+        row.append(loudness(bg[i:j] * gain[i:j, None]))
+    return gain, rows
+
+
+def write_report(film, rows, path):
+    lines = ["# Mix report", "", "Each line's loudness (dialogue stem) against everything else playing under it "
+             "(music and effects), before and after the clarity stage. Target: dialogue at least "
+             f"{TARGET_SBR:.0f} LU above the background.", "",
+             "| line | who | dialogue LUFS | background before | after | margin before | after |",
+             "| --- | --- | --- | --- | --- | --- | --- |"]
+    by_who = {}
+    for ev, ld, lb, need, lb2 in rows:
+        by_who.setdefault(ev.who, []).append(ld)
+        lines.append(f"| {ev.line} | {ev.who} | {ld:.1f} | {lb:.1f} | {lb2:.1f} | {ld - lb:+.1f} | {ld - lb2:+.1f} |")
+    lines += ["", "| who | lines | median LUFS | quietest | loudest |", "| --- | --- | --- | --- | --- |"]
+    for who, v in sorted(by_who.items()):
+        lines.append(f"| {who} | {len(v)} | {np.median(v):.1f} | {min(v):.1f} | {max(v):.1f} |")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def speech_mask(film, n, hop=0.1):
@@ -268,7 +328,10 @@ def render(film, out_path: Path, t0=0.0, t1=None):
     mus = music_bus(film, n, dia)
     print("  adding space...", flush=True)
     wet = S.convolve_stereo(dia_send + fx_send, S.reverb_ir(1.8, 0.5, seed=5))[:n]
-    master = dia + fx * 0.8 + mus + wet * 0.3
+    print("  clearing room for every line...", flush=True)
+    bg = fx * 0.8 + mus
+    gain, rows = clarity(film, dia, bg)
+    master = dia + bg * gain[:, None] + wet * 0.3
     master, ref = level(master, film)
     master *= 10 ** ((FILM_LUFS - loudness(master[: int(total * SR)])) / 20)
     master = true_peak_limit(master)
@@ -278,6 +341,11 @@ def render(film, out_path: Path, t0=0.0, t1=None):
     sf.write(str(out_path), out, SR, subtype="PCM_24")
     if (t0, t1) == (0.0, total):
         report(out, film, ref)
+        write_report(film, rows, out_path.parent / "mix_report.md")
+        low = [r for r in rows if r[1] - r[4] < TARGET_SBR - 0.5]
+        margins = [r[1] - r[4] for r in rows]
+        print(f"  clarity: dialogue margin over background median {np.median(margins):+.1f} LU, "
+              f"lowest {min(margins):+.1f} ({len(low)} lines under target after ducking)", flush=True)
     peak = float(np.max(np.abs(out))) if len(out) else 0.0
     print(f"  mix: {len(out) / SR:.1f} s, peak {20 * math.log10(peak + 1e-9):.1f} dBFS -> {out_path}", flush=True)
 
