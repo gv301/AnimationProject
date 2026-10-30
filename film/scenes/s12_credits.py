@@ -67,7 +67,7 @@ def _title_and_credits(canvas, ctx):
     dark = smoothstep(c["credits"], c["credits"] + 1.0, t)
     if dark <= 0:
         return
-    canvas.drawRect(skia.Rect.MakeWH(W, H), gfx.fill("#16141c", 0.94 * dark))
+    canvas.drawRect(skia.Rect.MakeWH(W, H), gfx.fill("#16141c", dark))
     scroll = (t - c["credits"]) / (c["post"] - c["credits"])
     y = lerp(H + 60, -760, scroll)
     for item in CREDITS:

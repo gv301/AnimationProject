@@ -63,7 +63,8 @@ def draw(canvas, ctx):
     pal = wd.palette([(0.0, wd.SUNSET)], 0.0)
     soar = t >= c["soar"]
     cam, percy_xy, scale = _shot(ctx, tw)
-    _backdrop(canvas, cam, pal, tw)
+    sun = _backdrop(canvas, cam, pal, tw)
+    wd.draw_god_rays(canvas, sun, pal, t, strength=1.2)
     pose, state = _pose(ctx, tw)
     amb = wd.ambient_tuple(pal)
     look = Look(ambient=amb, rim=(pal["rim"], -0.2, 0.95))
@@ -80,6 +81,7 @@ def draw(canvas, ctx):
     if c["wings"] <= t < c["wings"] + 0.5:
         flash = 1 - (t - c["wings"]) / 0.5
         canvas.drawRect(skia.Rect.MakeWH(W, H), gfx.fill("#fff2d0", 0.35 * flash, blend="screen"))
+    wd.draw_flare(canvas, sun, pal, strength=0.9)
     _model(canvas, ctx, cam, percy_xy, scale)
 
 
@@ -131,6 +133,7 @@ def _backdrop(canvas, cam, pal, tw):
     wd.draw_islands(canvas, far, pal, f=0.1, span=8000, count=6)
     wd.draw_headland(canvas, far, pal, tw, x=-700.0, beam=0.8)
     wd.draw_sea(canvas, far, pal, tw, sun_x=sea_x_under(far, sx), bottom=2600)
+    sun = (sx, sy)
     # the pier, left behind
     with cam.layer(canvas, 1.0):
         x0, x1 = cam.span(1.0, 400)
@@ -143,6 +146,7 @@ def _backdrop(canvas, cam, pal, tw):
                                 gfx.fill(darken(wood, 0.3)))
             canvas.drawRect(skia.Rect.MakeLTRB(x0 - 400, level, x1 + 400, level + 3000),
                             gfx.fill(pal["sea_near"], 0.6))
+    return sun
 
 
 def _pose(ctx, tw):

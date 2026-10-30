@@ -111,7 +111,7 @@ def scene_events(film):
         t = st.start + st.cues["build"] + i * s2.POP
         ev.append(E(t, sfx.pop(S.midi_hz(notes[i])), 0.32, (s2.ANCHORS[name][0] - 960) / 1400, 0.2))
     roll = st.cues["roll"]
-    ev.append(E(st.start + roll + 0.2, sfx.slide_whistle(1400, 300, 2.6), 0.6, 0.6, 0.3))
+    ev.append(E(st.start + roll + 0.2, sfx.slide_whistle(1400, 300, 2.6), 0.38, 0.6, 0.3))
     ev.append(E(st.start + st.cues["clatter"], sfx.clatter(), 0.6, 0.95, 0.5))
     ev.append(E(st.start + st.cues["erase"], sfx.eraser(0.7), 0.6, 0.0, 0.2))
     ev.append(E(st.start + st.cues["erase"], sfx.whoosh(0.7, 300, 3000, seed=3), 0.4, 0.0, 0.2))
@@ -219,7 +219,7 @@ def scene_events(film):
     seg = st.duration
     ev.append(E(st.start, sfx.chain_whir(c["crest"], _curve(ts, cad, 0, c["crest"])), 0.4, -0.1, 0.05))
     clicks_t, gains = _freewheel(m, c["crest"], st.duration)
-    ev.append(E(st.start, sfx.clicks(list(clicks_t), seg, sfx.tick(3300), list(gains)), 0.45, -0.05, 0.03))
+    ev.append(E(st.start, sfx.clicks(list(clicks_t), seg, sfx.tick(3300), list(gains)), 0.28, -0.05, 0.03))
     wind_curve = _curve(ts, np.clip(v / 2500, 0, 1), 0, seg)
     ev.append(E(st.start, sfx.wind(seg, wind_curve, seed=9), 0.22, 0.0, 0.0))
     road = np.where(ts < 0, 0, 1)
@@ -235,7 +235,7 @@ def scene_events(film):
         crossings = np.nonzero((np.diff(idx) > 0) & (rel[1:] > 0))[0]
         thumps += [m.t[i + 1] for i in crossings if m.t[i + 1] < c["launch"]]
     thumps.sort()
-    ev.append(E(st.start, sfx.clicks(thumps, seg, sfx.plank_thump(1)), 0.4, 0.0, 0.1))
+    ev.append(E(st.start, sfx.clicks(thumps, seg, sfx.plank_thump(1)), 0.11, 0.0, 0.1))
     ev.append(E(st.start + c["duck"], sfx.shimmer(0.6, seed=9, count=14), 0.4, 0.2, 0.3))
     t = c["duck"] + 0.9
     while t < c["L44"]:

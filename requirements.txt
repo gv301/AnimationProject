@@ -1,0 +1,6 @@
+skia-python>=87
+numpy>=1.26
+scipy>=1.11
+soundfile>=0.12
+# optional: lets tools/pick_takes.py transcribe takes with Whisper
+# sherpa-onnx>=1.10

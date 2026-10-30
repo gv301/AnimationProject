@@ -116,7 +116,14 @@ def render(film, out_path: Path, t0=0.0, t1=None):
     print("  adding space...", flush=True)
     wet = S.convolve_stereo(dia_send + fx_send, S.reverb_ir(1.8, 0.5, seed=5))[:n]
     master = dia + fx * 0.8 + mus + wet * 0.3
-    master = S.limiter(master * 1.1, ceiling=0.95)
+    # loudness: put the louder-but-normal passages (dialogue over music) at about -16 dBFS RMS,
+    # and let the limiter catch the rare peaks above -1 dBFS
+    win = int(0.4 * SR)
+    blocks = master[: len(master) // win * win].reshape(-1, win, 2)
+    rms = np.sqrt(np.mean(blocks ** 2, axis=(1, 2)))
+    ref = float(np.percentile(rms[rms > 1e-4], 90))
+    master *= 0.16 / ref
+    master = S.limiter(master, ceiling=0.89)
     a, b = int(t0 * SR), int(t1 * SR)
     out = master[a:b]
     out_path.parent.mkdir(parents=True, exist_ok=True)

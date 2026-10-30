@@ -171,7 +171,7 @@ def main():
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(video), "-i", str(wav),
                         "-i", str(srt), "-map", "0:v", "-map", "1:a", "-map", "2:s",
                         "-c:v", "copy", "-c:a", "aac", "-b:a", "256k", "-c:s", "mov_text",
-                        "-metadata:s:s:0", "language=eng", "-shortest", str(out)], check=True)
+                        "-metadata:s:s:0", "language=eng", "-movflags", "+faststart", str(out)], check=True)
     print(f"Done in {(time.monotonic() - started) / 60:.1f} min: {out}", flush=True)
 
 

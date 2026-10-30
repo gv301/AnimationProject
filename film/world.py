@@ -687,3 +687,34 @@ def draw_surf(canvas, cam: Camera, pal, t, f=1.0, shore=60.0, seed=77):
             water = gfx.poly(pts + [(x1 + 60, 1600), (x0, 1600)])
             canvas.drawPath(water, gfx.fill(mix(pal["sea_near"], pal["sky_low"], 0.3), 0.5 * (1 - k * 0.25)))
             canvas.drawPath(gfx.smooth(pts, closed=False), gfx.stroke("#ffffff", 4, a=0.75 * reach))
+
+
+# --------------------------------------------------------------------------
+# Sunlight: god rays behind the action, a lens flare in front of it
+# --------------------------------------------------------------------------
+
+def draw_god_rays(canvas, sun, pal, t, strength=1.0, count=9, seed=3):
+    sx, sy = sun
+    for k in range(count):
+        a = math.pi * (0.15 + 0.7 * rand(seed, k, "a")) + 0.03 * math.sin(t * 0.3 + k)
+        spread = 0.04 + 0.05 * rand(seed, k, "w")
+        length = 1800
+        wedge = gfx.poly([(sx, sy), (sx + math.cos(a - spread) * length, sy + math.sin(a - spread) * length),
+                          (sx + math.cos(a + spread) * length, sy + math.sin(a + spread) * length)])
+        alpha = strength * (0.05 + 0.05 * rand(seed, k, "al")) * (0.7 + 0.3 * math.sin(t * 0.5 + k * 1.7))
+        canvas.drawPath(wedge, gfx.fill(shader=gfx.radial((sx, sy), length, [pal["sun"], pal["glow"]],
+                        [0.0, 1.0], alphas=[alpha, 0.0]), blend="screen"))
+
+
+def draw_flare(canvas, sun, pal, strength=1.0):
+    sx, sy = sun
+    cx, cy = W / 2, H / 2
+    for k, (u, r, a) in enumerate(((0.35, 40, 0.10), (0.7, 22, 0.14), (1.15, 70, 0.06), (1.45, 30, 0.12),
+                                    (1.8, 110, 0.05))):
+        x, y = sx + (cx - sx) * u * 2, sy + (cy - sy) * u * 2
+        col = [pal["glow"], pal["sun"], "#9fd8ff", pal["glow"], "#ffb0d0"][k]
+        canvas.drawCircle(x, y, r, gfx.fill(shader=gfx.radial((x, y), r, [col, col], [0.0, 1.0],
+                          alphas=[a * strength, 0.0]), blend="screen"))
+    canvas.drawRect(skia.Rect.MakeLTRB(sx - 900, sy - 3, sx + 900, sy + 3),
+                    gfx.fill(shader=gfx.linear((sx - 900, sy), (sx + 900, sy), [pal["sun"], pal["sun"], pal["sun"]],
+                             [0.0, 0.5, 1.0], alphas=[0.0, 0.35 * strength, 0.0]), blend="screen"))

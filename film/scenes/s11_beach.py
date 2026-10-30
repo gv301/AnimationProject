@@ -72,7 +72,8 @@ def draw(canvas, ctx):
         k = since - TOUCH
         py = -26 * math.exp(-k * 6) * abs(math.sin(k * 14))
     cam = _camera(ctx, px, py)
-    _backdrop(canvas, ctx, cam, pal)
+    sun = _backdrop(canvas, ctx, cam, pal)
+    wd.draw_god_rays(canvas, sun, pal, t, strength=1.0 - 0.6 * ctx.between("rideoff", "lineart"))
     pose = _pose(ctx, state, since)
     amb = wd.ambient_tuple(pal)
     look = Look(ambient=amb, rim=(pal["rim"], -0.1, pal["rim_strength"]))
@@ -81,8 +82,9 @@ def draw(canvas, ctx):
         draw_rider(canvas, px, py, pose, state, look, shadow=(pal["shadow"], 0.35 * smoothstep(-300, 0, py)))
         _sand(canvas, ctx, px, since)
         _gus(canvas, ctx, pal)
+    wd.draw_flare(canvas, sun, pal, strength=0.6 * (1 - ctx.between("lineart", ctx.cue("lineart") + 0.8)))
     if t < c["rideoff"] + 1.0:
-        sx, sy = cam.to_screen((px + 360 + 18 * math.sin(t * 1.1), py - 400 + 12 * math.sin(t * 1.6)))
+        sx, sy = cam.to_screen((px + 420 + 18 * math.sin(t * 1.1), py - 430 + 12 * math.sin(t * 1.6)))
         spark.draw(canvas, sx, sy, ctx.mouth("MODEL"), t, alpha=1 - smoothstep(c["rideoff"], c["rideoff"] + 1, t))
     _close_page(canvas, ctx, cam, px, py, pose, state)
 
@@ -92,7 +94,9 @@ def _camera(ctx, px, py):
     c = ctx.cues
     talk = smoothstep(c["land"] + TOUCH + 0.6, c["L53"], t)
     crane = ease_in_out(ctx.between("rideoff", "lineart"))
-    rest_x = 260 * 0.0 + 160
+    m = _ride(ctx)
+    stop = m.at(c["rideoff"])[0] - m.at(c["land"] + TOUCH)[0]
+    rest_x = stop + 330
     zoom = lerp(lerp(0.85, 1.3, talk), 0.62, crane)
     x = lerp(lerp(px + 200, rest_x, talk), rest_x + 900, crane)
     y = lerp(lerp(min(py, 0) - 260, -250, talk), -560, crane)
@@ -110,6 +114,7 @@ def _backdrop(canvas, ctx, cam, pal):
     wd.draw_islands(canvas, cam, pal, f=0.1, span=5000, count=4)
     wd.draw_headland(canvas, cam, pal, t, x=-900.0, beam=smoothstep(0.4, 1.0, sun_drop))
     wd.draw_sea(canvas, cam, pal, t, sun_x=sea_x_under(cam, sx), bottom=900)
+    sun = (sx, sy)
     wd.draw_surf(canvas, cam, pal, t, f=0.85, shore=-60)
     wd.draw_ground(canvas, cam, pal, kind="sand", depth=1600)
     with cam.layer(canvas, 1.0):
@@ -121,6 +126,7 @@ def _backdrop(canvas, ctx, cam, pal):
             gx = k * 900 + 300
             canvas.drawRect(skia.Rect.MakeLTRB(gx - 14, -150, gx + 14, 10), gfx.fill(darken(pal["wood"], 0.1)))
             canvas.drawRect(skia.Rect.MakeLTRB(gx - 14, -150, gx - 6, 10), gfx.fill(lighten(pal["wood"], 0.15)))
+    return sun
 
 
 def _pose(ctx, state, since):
