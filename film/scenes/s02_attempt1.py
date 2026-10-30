@@ -23,8 +23,8 @@ ROLL_ACCEL = 230.0
 
 BEATS = [
     Mark("build"), Wait(POP * len(ORDER) + 0.5), Mark("blink"), Wait(0.6), Mark("look_down"),
-    Wait(0.5), Say("L02", gap=0.1), Wait(0.4), Mark("roll"), Wait(1.0), Say("L03", gap=0.0),
-    Wait(1.0), Mark("clatter"), Wait(0.6), Say("L04", gap=0.3), Wait(0.3), Mark("erase"), Wait(0.75),
+    Wait(0.5), Say("L02", gap=0.1), Wait(0.4), Mark("roll"), Wait(0.85), Say("L03", gap=0.0),
+    Wait(1.0), Mark("clatter"), Wait(0.6), Say("L04", gap=0.3), Wait(0.3), Mark("erase"), Wait(0.6),
 ]
 
 

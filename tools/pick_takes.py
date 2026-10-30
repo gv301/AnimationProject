@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """Pick the best take of every dialogue line.
 
-Each line has two takes (L08.wav, L08.t2.wav). Every take is judged on:
+Each line has two takes: the Breeze kit's L08.wav and L08.t2.wav, or with --source eleven the
+ElevenLabs takes dialogue/eleven/L08.t1.flac and L08.t2.flac. Every take is judged on:
   * content: with a speech recogniser (sherpa-onnx + a Whisper model directory) it is
     transcribed and scored by word error against the script;
   * sound quality: with DNSMOS (sig_bak_ovr.onnx, a speech-quality model trained on
     listener ratings) it gets signal / background / overall scores out of 5, which
     drop for codec-like, muffled or distorted audio;
-  * the voice kit's audio checks in dialogue/manifest.json.
-Writes dialogue/selection.json (read by the film) and dialogue/takes_report.md.
+  * audio checks: the Breeze kit's (dialogue/manifest.json), or clipping and length for ElevenLabs.
+Writes dialogue/selection.json (read by the film) and a takes_report.md beside the takes.
 
   python tools/pick_takes.py --asr-model DIR --quality-model sig_bak_ovr.onnx --prefer GUS=1
+  python tools/pick_takes.py --source eleven --asr-model DIR --quality-model sig_bak_ovr.onnx
   python tools/pick_takes.py                    (audio checks only)
 """
 
@@ -152,32 +154,57 @@ def penalty(warnings, heard_perfectly=False) -> float:
     return total
 
 
+def audio_checks(path: Path, text: str) -> dict:
+    """Clipping and length checks for takes that come without a manifest."""
+    import numpy as np
+    import soundfile as sf
+    x, rate = sf.read(str(path), dtype="float32", always_2d=False)
+    if x.ndim > 1:
+        x = x.mean(axis=1)
+    seconds = len(x) / rate
+    warnings = []
+    if np.mean(np.abs(x) > 0.995) > 1e-4:
+        warnings.append("clipping")
+    expected = 0.6 + 0.065 * len(re.sub(r"\([^)]*\)", "", text))
+    if seconds > 2.2 * expected + 1.0:
+        warnings.append(f"longer than expected ({seconds:.1f} s)")
+    return {"seconds": round(seconds, 2), "warnings": warnings}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--asr-model", type=Path, help="sherpa-onnx Whisper model directory")
     parser.add_argument("--quality-model", type=Path, help="DNSMOS sig_bak_ovr.onnx")
     parser.add_argument("--prefer", nargs="*", default=[], metavar="VOICE=TAKE",
                         help="lean toward a take for a voice, e.g. GUS=1")
+    parser.add_argument("--source", choices=["breeze", "eleven"], default="breeze",
+                        help="which recorded takes to choose between")
+    parser.add_argument("--force", nargs="*", default=[], metavar="LINE=TAKE",
+                        help="overrule the scores for a line after listening, e.g. L29=1")
     args = parser.parse_args()
     sheet = json.loads(SHEET.read_text(encoding="utf-8"))
-    manifest = json.loads((DIALOGUE / "manifest.json").read_text(encoding="utf-8"))
+    eleven = args.source == "eleven"
+    folder = DIALOGUE / "eleven" if eleven else DIALOGUE
+    manifest = {"takes": {}} if eleven else json.loads((DIALOGUE / "manifest.json").read_text(encoding="utf-8"))
     asr = Recogniser(args.asr_model) if args.asr_model else None
     quality = Quality(args.quality_model) if args.quality_model else None
     prefer = {k.upper(): int(v) for k, v in (p.split("=") for p in args.prefer)}
+    force = {k.upper(): int(v) for k, v in (p.split("=") for p in args.force)}
     selection, rows = {}, []
     for line in sheet["lines"]:
         lid = line["id"]
         ref = words(line["text"])
         candidates = []
-        for name in (f"{lid}.wav", f"{lid}.t2.wav"):
-            path = DIALOGUE / name
+        names = sorted(p.name for p in folder.glob(f"{lid}.t*.flac")) if eleven else (f"{lid}.wav", f"{lid}.t2.wav")
+        for name in names:
+            path = folder / name
             if not path.is_file():
                 continue
-            info = manifest["takes"].get(name, {})
+            info = audio_checks(path, line["text"]) if eleven else manifest["takes"].get(name, {})
             heard = asr(path) if asr else ""
             error = wer(ref, words(heard)) if asr else 0.0
             q = quality(path) if quality else {}
-            take = 2 if name.endswith(".t2.wav") else 1
+            take = int(re.search(r"\.t(\d+)\.", name).group(1)) if ".t" in name else 1
             score = 2.0 * error + quality_cost(q) \
                 + penalty(info.get("warnings", []), asr is not None and error == 0) \
                 + (0.25 if line["who"] in prefer and prefer[line["who"]] != take else 0.0) \
@@ -185,8 +212,8 @@ def main():
             candidates.append((score, name, error, heard, dict(info, quality=q)))
         if not candidates:
             continue
-        best = min(candidates)
-        selection[lid] = best[1]
+        best = min(candidates, key=lambda c: (lid in force and not c[1].startswith(f"{lid}.t{force[lid]}."), c[0]))
+        selection[lid] = ("eleven/" if eleven else "") + best[1]
         rows.append((lid, line["who"], line["text"], candidates, best[1]))
         print(f"{lid} {line['who']:<5} -> {best[1]:<11} " +
               "  ".join(f"{c[1]}: wer {c[2]:.2f} q {c[4]['quality'].get('ovr', '-')}"
@@ -198,13 +225,14 @@ def main():
         how.append("word error against the script (Whisper base.en via sherpa-onnx)")
     if quality:
         how.append("speech quality (DNSMOS P.835: signal / background / overall, out of 5)")
-    how.append("the voice kit's audio checks")
+    how.append("audio checks (clipping, length)" if eleven else "the voice kit's audio checks")
     report = ["# Take selection", "", "Chosen by " + ", ".join(how) + "." +
-              (f" Leaning toward: {', '.join(f'{k} take {v}' for k, v in prefer.items())}." if prefer else ""), ""]
+              (f" Leaning toward: {', '.join(f'{k} take {v}' for k, v in prefer.items())}." if prefer else "") +
+              (f" Overruled by hand: {', '.join(f'{k} take {v}' for k, v in force.items())}." if force else ""), ""]
     for lid, who, text, candidates, chosen in rows:
         report.append(f"**{lid} {who}**: {text}  ")
         for score, name, error, heard, info in sorted(candidates, key=lambda c: c[1]):
-            mark = "✓" if name == chosen else " "
+            mark = "✓" if chosen.endswith(name) else " "
             warn = f" ({'; '.join(info.get('warnings', []))})" if info.get("warnings") else ""
             heard_text = f" heard: \"{heard}\"" if asr else ""
             q = info.get("quality") or {}
@@ -212,8 +240,8 @@ def main():
             report.append(f"- {mark} `{name}` {info.get('seconds', 0):.1f} s, word error {error:.2f}{q_text}"
                           f"{warn}.{heard_text}  ")
         report.append("")
-    (DIALOGUE / "takes_report.md").write_text("\n".join(report), encoding="utf-8")
-    print(f"wrote {DIALOGUE / 'selection.json'} and takes_report.md")
+    (folder / "takes_report.md").write_text("\n".join(report), encoding="utf-8")
+    print(f"wrote {DIALOGUE / 'selection.json'} and {folder / 'takes_report.md'}")
 
 
 if __name__ == "__main__":

@@ -22,12 +22,12 @@ REAR = (742.0, GROUND - GEO.R)
 SEAT = (REAR[0] + GEO.saddle[0], REAR[1] + GEO.saddle[1])
 
 BEATS = [
-    Mark("settle"), Wait(1.5),
-    Say("L11", gap=0.0), Say("L12", gap=0.55), Wait(0.3),
-    Say("L13", gap=0.6), Say("L14", gap=0.25), Wait(0.45),
-    Say("L15", gap=0.55), Wait(0.5),
-    Say("L16", gap=0.4), Say("L17", gap=0.5), Say("L18", gap=0.35), Wait(0.4),
-    Say("L19", gap=0.5), Say("L20", gap=0.55), Wait(0.5),
+    Mark("settle"), Wait(1.2),
+    Say("L11", gap=0.0), Say("L12", gap=0.45), Wait(0.3),
+    Say("L13", gap=0.5), Say("L14", gap=0.25), Wait(0.45),
+    Say("L15", gap=0.45), Wait(0.5),
+    Say("L16", gap=0.4), Say("L17", gap=0.4), Say("L18", gap=0.35), Wait(0.4),
+    Say("L19", gap=0.5), Say("L20", gap=0.45), Wait(0.5),
     Say("L21", gap=0.3), Mark("grip"), Wait(1.3),
 ]
 

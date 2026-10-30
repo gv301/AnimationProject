@@ -18,7 +18,7 @@ NAME = "s12_credits"
 LOOK = {"grain": 0.6, "vignette": 0.4}
 
 BEATS = [
-    Mark("title"), Wait(3.6), Mark("credits"), Wait(11.5), Mark("post"), Wait(1.4), Mark("wobble"),
+    Mark("title"), Wait(3.2), Mark("credits"), Wait(9.5), Mark("post"), Wait(1.2), Mark("wobble"),
     Wait(2.2), Say("L59", gap=0.3), Wait(1.6),
 ]
 

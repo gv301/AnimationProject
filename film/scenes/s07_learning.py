@@ -23,8 +23,8 @@ LOOK = {"grain": 0.8, "vignette": 0.6}
 BEATS = [
     Wait(0.9), Say("L28", gap=0.0), Mark("push"), Wait(2.4), Mark("crash"), Wait(0.9),
     Say("L29", gap=0.0), Say("L30", gap=0.45), Say("L31", gap=0.2), Wait(0.3), Mark("emerge"),
-    Wait(0.7), Say("L32", gap=0.2), Say("L33", gap=0.55), Mark("go"), Wait(1.6),
-    Say("L34", gap=0.0), Say("L35", gap=0.2), Wait(1.6),
+    Wait(0.7), Say("L32", gap=0.2), Say("L33", gap=0.55), Mark("go"), Wait(1.3),
+    Say("L34", gap=0.0), Say("L35", gap=0.2), Wait(1.0),
 ]
 
 GUS = Gus()

@@ -24,7 +24,7 @@ BEATS = [
     Mark("glow"), Wait(1.0), Mark("peel"), Wait(2.6), Mark("world"), Wait(2.2), Mark("bike"),
     Wait(4.2), Mark("percy"), Wait(1.9),
     Say("L22", gap=0.2), Say("L23", gap=0.3), Say("L24", gap=0.55), Say("L25", gap=0.4),
-    Wait(0.5), Say("L26", gap=0.3), Say("L27", gap=0.6), Wait(0.5), Mark("title"), Wait(4.4),
+    Wait(0.5), Say("L26", gap=0.3), Say("L27", gap=0.6), Wait(0.5), Mark("title"), Wait(4.0),
 ]
 
 PERCY_SCREEN = (922.0, 650.0)     # where Percy's middle sits on screen at zoom 1

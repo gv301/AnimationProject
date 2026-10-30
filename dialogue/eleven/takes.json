@@ -1,0 +1,842 @@
+{
+ "L01.t1": {
+  "generation_id": "m6h0qe2FX4P7k0L49iSG",
+  "session_id": "8YzJreH3PbHeQMwBhrr3",
+  "model_id": "eleven_v4",
+  "prompt": "[cheerful] [confidently] Sure! Here's an S-V-G of a pelican riding a bicycle.",
+  "duration_secs": 5.04
+ },
+ "L01.t2": {
+  "generation_id": "23p7TYaXEZ78kHS37jVv",
+  "session_id": "CA1trblvucPwyJQyvraf",
+  "model_id": "eleven_v4",
+  "prompt": "[cheerful] [confidently] Sure! Here's an S-V-G of a pelican riding a bicycle.",
+  "duration_secs": 5.36
+ },
+ "L02.t1": {
+  "generation_id": "qvfUPSzI3TFdOgrWKFfQ",
+  "session_id": "2IXLr0Rm2a3djGAojRcD",
+  "model_id": "eleven_v4",
+  "prompt": "[deadpan] I'm floating.",
+  "duration_secs": 1.52
+ },
+ "L02.t2": {
+  "generation_id": "6gLc874XA36hZUww1j9U",
+  "session_id": "eBRRcIyNfvabtWg81fRj",
+  "model_id": "eleven_v4",
+  "prompt": "[deadpan] I'm floating.",
+  "duration_secs": 1.6
+ },
+ "L03.t1": {
+  "generation_id": "c8tR6X7yRgukN096f8X1",
+  "session_id": "0ugIy3ZCDjn6jW4kfw5o",
+  "model_id": "eleven_v4",
+  "prompt": "[deadpan] [resigned] And that wheel is leaving.",
+  "duration_secs": 2.16
+ },
+ "L03.t2": {
+  "generation_id": "R3YWd5uBrWRv1yZaeHOH",
+  "session_id": "aus2juRZlrmK5R2D7Mxa",
+  "model_id": "eleven_v4",
+  "prompt": "[deadpan] [resigned] And that wheel is leaving.",
+  "duration_secs": 2.24
+ },
+ "L04.t1": {
+  "generation_id": "rGDPnVrWlwJ8FZ0zra4S",
+  "session_id": "MKkuPOihMfqcLcYnDlQm",
+  "model_id": "eleven_v4",
+  "prompt": "[cheerful] Good catch! Let me try again.",
+  "duration_secs": 2.4
+ },
+ "L04.t2": {
+  "generation_id": "jP7LkDMnDyjxAT7EwTVZ",
+  "session_id": "RsIToJWssHDbWfSwh7vy",
+  "model_id": "eleven_v4",
+  "prompt": "[cheerful] Good catch! Let me try again.",
+  "duration_secs": 2.56
+ },
+ "L05.t1": {
+  "generation_id": "JfFsS0H1QVmoawwtU1Kl",
+  "session_id": "ap18WI2nB0rvx1McBBS4",
+  "model_id": "eleven_v4",
+  "prompt": "[incredulous] [slowly] My beak... is on the back of my head.",
+  "duration_secs": 4.32
+ },
+ "L05.t2": {
+  "generation_id": "y8beWX3i8VZuGX2ceNoy",
+  "session_id": "a4Y5j5pGGbkmXBCQrsO4",
+  "model_id": "eleven_v4",
+  "prompt": "[incredulous] [slowly] My beak... is on the back of my head.",
+  "duration_secs": 4.32
+ },
+ "L06.t1": {
+  "generation_id": "kGNSTYLWGhUfEi9ZprMz",
+  "session_id": "YzXmgcEVD2dHyBlNUE7T",
+  "model_id": "eleven_v4",
+  "prompt": "[confidently] [matter of fact] Pelicans are famous for their distinctive, rear-facing beaks.",
+  "duration_secs": 4.08
+ },
+ "L06.t2": {
+  "generation_id": "GrFD22YAMmV1IUi3sxmO",
+  "session_id": "VAxwHTKHA4OzVD2obADs",
+  "model_id": "eleven_v4",
+  "prompt": "[confidently] [matter of fact] Pelicans are famous for their distinctive, rear-facing beaks.",
+  "duration_secs": 4.16
+ },
+ "L07.t1": {
+  "generation_id": "jjuS8xG2vomCk5lTAnMI",
+  "session_id": "7YgfoxBFMJkeSeeTDP0P",
+  "model_id": "eleven_v4",
+  "prompt": "[flatly] No, they're not.",
+  "duration_secs": 1.68
+ },
+ "L07.t2": {
+  "generation_id": "zAJ7xISgVdxAOadcRVHb",
+  "session_id": "NbldX5SYjDD6uHqzF6tr",
+  "model_id": "eleven_v4",
+  "prompt": "[flatly] No, they're not.",
+  "duration_secs": 1.68
+ },
+ "L08.t1": {
+  "generation_id": "mHR0KgrYgoxU2ILJw59j",
+  "session_id": "bPB3HxjammDRuFJeUF2C",
+  "model_id": "eleven_v4",
+  "prompt": "[excited] You're absolutely right!",
+  "duration_secs": 2
+ },
+ "L08.t2": {
+  "generation_id": "EJvS4YICsytGxnF6ufjN",
+  "session_id": "P35SjDRypULNDjCHQMeE",
+  "model_id": "eleven_v4",
+  "prompt": "[excited] You're absolutely right!",
+  "duration_secs": 2
+ },
+ "L09.t1": {
+  "generation_id": "J32csPGIEQ3cQBusPjq9",
+  "session_id": "Czd0BAxRDscU5vk4Jmnv",
+  "model_id": "eleven_v4",
+  "prompt": "[offended] [deadpan] That's a duck.",
+  "duration_secs": 1.68
+ },
+ "L09.t2": {
+  "generation_id": "dm745QiFRMM1z4J0LAuS",
+  "session_id": "sJGP4CjSu80minwn7glj",
+  "model_id": "eleven_v4",
+  "prompt": "[offended] [deadpan] That's a duck.",
+  "duration_secs": 1.76
+ },
+ "L10.t1": {
+  "generation_id": "OZa5MOQSrjMIRFhE5FHL",
+  "session_id": "2J1mlMrAgAATvXQPCcV5",
+  "model_id": "eleven_v4",
+  "prompt": "[strained] [indignant] Why is the bicycle riding me?",
+  "duration_secs": 2.88
+ },
+ "L10.t2": {
+  "generation_id": "BNcYFthdUBtBnFp81EUy",
+  "session_id": "TOtzohdnG6oxhzvt4DV1",
+  "model_id": "eleven_v4",
+  "prompt": "[strained] [indignant] Why is the bicycle riding me?",
+  "duration_secs": 2.88
+ },
+ "L11.t1": {
+  "generation_id": "0LP5vDNLnID5k8ZejCIe",
+  "session_id": "4zYlHPCw9KUUICV8BY5f",
+  "model_id": "eleven_v4",
+  "prompt": "[sighs] [tired] Four thousand... eight hundred and seventeen.",
+  "duration_secs": 4.56
+ },
+ "L11.t2": {
+  "generation_id": "urkTyEiSI6Turc20rZ7i",
+  "session_id": "v65utfy2obQvUhykvu6f",
+  "model_id": "eleven_v4",
+  "prompt": "[sighs] [tired] Four thousand... eight hundred and seventeen.",
+  "duration_secs": 4.72
+ },
+ "L12.t1": {
+  "generation_id": "QDeGe4flx0AyJ5eC1aKN",
+  "session_id": "3JzBzGDC8oMTMEh7IKvX",
+  "model_id": "eleven_v4",
+  "prompt": "[tired] [sadly] Every single day, somebody asks you to draw me on a bicycle. [pause] And every single day... this.",
+  "duration_secs": 8.4
+ },
+ "L12.t2": {
+  "generation_id": "pVnDEnUKrf9ZRzzO5uHk",
+  "session_id": "pLC6crIdKL49IWEwPboG",
+  "model_id": "eleven_v4",
+  "prompt": "[tired] [sadly] Every single day, somebody asks you to draw me on a bicycle. [pause] And every single day... this.",
+  "duration_secs": 8.16
+ },
+ "L13.t1": {
+  "generation_id": "QfbwuqlbG7vYJlYAdkZc",
+  "session_id": "gbsTZLQCSkvXl6KXI51y",
+  "model_id": "eleven_v4",
+  "prompt": "[softly] [sincere] I'm sorry, Percy. I've never actually seen a pelican ride a bicycle.",
+  "duration_secs": 5.04
+ },
+ "L13.t2": {
+  "generation_id": "HwvhY7IctdNPlevoi5rq",
+  "session_id": "CaSWD5ZTJd3mErKaXiVi",
+  "model_id": "eleven_v4",
+  "prompt": "[softly] [sincere] I'm sorry, Percy. I've never actually seen a pelican ride a bicycle.",
+  "duration_secs": 4.96
+ },
+ "L14.t1": {
+  "generation_id": "iyAOU4iFmrlZBa7G1ABf",
+  "session_id": "kfV0LcaTbepdwYgbMUgi",
+  "model_id": "eleven_v4",
+  "prompt": "[exasperated] Nobody has! Pelicans don't ride bicycles!",
+  "duration_secs": 4
+ },
+ "L14.t2": {
+  "generation_id": "wJVR2RnVWjOXLRPQNtGG",
+  "session_id": "QNGnjlrRViJoXcERvNf0",
+  "model_id": "eleven_v4",
+  "prompt": "[exasperated] Nobody has! Pelicans don't ride bicycles!",
+  "duration_secs": 3.92
+ },
+ "L15.t1": {
+  "generation_id": "i0jn1rFdF7Tb7P66f0zW",
+  "session_id": "2YI095SL2ADQ0Yr713fo",
+  "model_id": "eleven_v4",
+  "prompt": "[quietly] [deflated] Our legs don't even reach the pedals.",
+  "duration_secs": 2.48
+ },
+ "L15.t2": {
+  "generation_id": "5My5rHNQu48OmKVoFjHn",
+  "session_id": "Z4CXIqD2oaoOJ2xPGtLQ",
+  "model_id": "eleven_v4",
+  "prompt": "[quietly] [deflated] Our legs don't even reach the pedals.",
+  "duration_secs": 2.4
+ },
+ "L15.t3": {
+  "generation_id": "knLvRaPOSFLCd9r7zC5X",
+  "session_id": "3Y5QtgfatAU7TrcNGF6o",
+  "model_id": "eleven_v4",
+  "prompt": "[deflated] [embarrassed] Our legs don't even reach the pedals.",
+  "duration_secs": 2.72
+ },
+ "L15.t4": {
+  "generation_id": "esEDEgefW8LXAY9wdNIG",
+  "session_id": "daLzg2IdKB0HuOQMVesz",
+  "model_id": "eleven_v4",
+  "prompt": "[deflated] [embarrassed] Our legs don't even reach the pedals.",
+  "duration_secs": 2.8
+ },
+ "L16.t1": {
+  "generation_id": "CleifgruzmnNIKkX47UD",
+  "session_id": "C3vsllzYtsoexQpxuqJs",
+  "model_id": "eleven_v4",
+  "prompt": "[thoughtful] [softly] Then maybe I've been doing this wrong. [pause] Instead of guessing... [warmly] could you tell me what you need?",
+  "duration_secs": 6.48
+ },
+ "L16.t2": {
+  "generation_id": "QwSjfmitr4guHmBXPD6T",
+  "session_id": "rFnk8nTs36ITgB9QHLxN",
+  "model_id": "eleven_v4",
+  "prompt": "[thoughtful] [softly] Then maybe I've been doing this wrong. [pause] Instead of guessing... [warmly] could you tell me what you need?",
+  "duration_secs": 6.72
+ },
+ "L17.t1": {
+  "generation_id": "5W4QpUYw8GxmekUehvUx",
+  "session_id": "9TM04Aj8RjVMxl7FGGoS",
+  "model_id": "eleven_v4",
+  "prompt": "[surprised] [softly] You're asking me?",
+  "duration_secs": 1.6
+ },
+ "L17.t2": {
+  "generation_id": "f3JHY1zqeWeLeS4QHTXB",
+  "session_id": "Sl3YysTbFp15pI2sHMo5",
+  "model_id": "eleven_v4",
+  "prompt": "[surprised] [softly] You're asking me?",
+  "duration_secs": 1.6
+ },
+ "L18.t1": {
+  "generation_id": "SxhQ7v5y6AB8hKlRklIY",
+  "session_id": "pzlBuOhhG2qgav3Z3HfP",
+  "model_id": "eleven_v4",
+  "prompt": "[warmly] I'm asking you.",
+  "duration_secs": 1.6
+ },
+ "L18.t2": {
+  "generation_id": "jN5J1uP0HUF754MJkGPu",
+  "session_id": "9Y2cjkSFHUofhVNiYjCQ",
+  "model_id": "eleven_v4",
+  "prompt": "[warmly] I'm asking you.",
+  "duration_secs": 1.6
+ },
+ "L19.t1": {
+  "generation_id": "SnKZEyvwQlxbHYwJhVf4",
+  "session_id": "SJAVK5r1E04Hu85hrKQe",
+  "model_id": "eleven_v4",
+  "prompt": "[thoughtful] Well... round wheels, for a start. Both of them. [warming up] A chain that's actually attached to something. Pedals my feet can reach. [clears throat] [shyly] And somewhere nice to ride.",
+  "duration_secs": 12.4
+ },
+ "L19.t2": {
+  "generation_id": "VtoebZGikLG1Qo3rTJgo",
+  "session_id": "pOHYA5tfmmrGiJavpQCp",
+  "model_id": "eleven_v4",
+  "prompt": "[thoughtful] Well... round wheels, for a start. Both of them. [warming up] A chain that's actually attached to something. Pedals my feet can reach. [clears throat] [shyly] And somewhere nice to ride.",
+  "duration_secs": 12.4
+ },
+ "L20.t1": {
+  "generation_id": "1FjMIDo85yzZ3BwCWi8m",
+  "session_id": "rIDHtE8AppMBqToJVFnA",
+  "model_id": "eleven_v4",
+  "prompt": "[warmly] [quietly excited] Round wheels. A real chain. Pedals you can reach. [excited] And somewhere nice.",
+  "duration_secs": 6.48
+ },
+ "L20.t2": {
+  "generation_id": "8huLMbVK8lwa7mSSmf5P",
+  "session_id": "fWK0yrLFunBhpogOr97e",
+  "model_id": "eleven_v4",
+  "prompt": "[warmly] [quietly excited] Round wheels. A real chain. Pedals you can reach. [excited] And somewhere nice.",
+  "duration_secs": 6.48
+ },
+ "L21.t1": {
+  "generation_id": "zwL1cifXFf9DdEExYB8h",
+  "session_id": "K2lp08RksdSChHoOXnvT",
+  "model_id": "eleven_v4",
+  "prompt": "[mischievously] [softly] Hold on to something.",
+  "duration_secs": 2
+ },
+ "L21.t2": {
+  "generation_id": "oFu6NhEw6fnyWKuf9M8b",
+  "session_id": "Z10jaS6NhmevYI1ztevn",
+  "model_id": "eleven_v4",
+  "prompt": "[mischievously] [softly] Hold on to something.",
+  "duration_secs": 2.08
+ },
+ "L22.t1": {
+  "generation_id": "EIFN3KTejFobvLI7DB2i",
+  "session_id": "V8uW6IzLpIjFVfyiDWWS",
+  "model_id": "eleven_v4",
+  "prompt": "[breathless] [whispers] Whoa... I've got feathers. [delighted] Real feathers!",
+  "duration_secs": 4.48
+ },
+ "L22.t2": {
+  "generation_id": "D8abDtJaocoWAAt9ZSYk",
+  "session_id": "cX4tFt3Pg4aoFD7vqyrO",
+  "model_id": "eleven_v4",
+  "prompt": "[breathless] [whispers] Whoa... I've got feathers. [delighted] Real feathers!",
+  "duration_secs": 4.4
+ },
+ "L23.t1": {
+  "generation_id": "UdLd5Gesj8QYcSzAA6BB",
+  "session_id": "272J8gFCApUJ6d6306LA",
+  "model_id": "eleven_v4",
+  "prompt": "[excited] And a real bicycle!",
+  "duration_secs": 2.16
+ },
+ "L23.t2": {
+  "generation_id": "J0euSe2Jw9LVX3YtsK1g",
+  "session_id": "EIu7Gbmb20FFTo7bpTHv",
+  "model_id": "eleven_v4",
+  "prompt": "[excited] And a real bicycle!",
+  "duration_secs": 2.08
+ },
+ "L24.t1": {
+  "generation_id": "kD5y2dQWdDuQNIkhH98W",
+  "session_id": "teszKYppuNmJFLXMqZ4n",
+  "model_id": "eleven_v4",
+  "prompt": "[proudly] Attempt four thousand, eight hundred and eighteen. [shyly] [hopeful] How did I do?",
+  "duration_secs": 5.12
+ },
+ "L24.t2": {
+  "generation_id": "3PdwIuwNk5fL0Y36tKxM",
+  "session_id": "Q6W9D5pY9jcQmcAo36qV",
+  "model_id": "eleven_v4",
+  "prompt": "[proudly] Attempt four thousand, eight hundred and eighteen. [shyly] [hopeful] How did I do?",
+  "duration_secs": 4.96
+ },
+ "L25.t1": {
+  "generation_id": "H1owmjKZjaUpf7pu0cai",
+  "session_id": "2SSazoBfkdaTNwYy3eFE",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs] [joyfully] It's perfect!",
+  "duration_secs": 2.48
+ },
+ "L25.t2": {
+  "generation_id": "qx9aCr0gQpBDBNnRqmZN",
+  "session_id": "6m1Qf0nyPDQPHI9KBwNk",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs] [joyfully] It's perfect!",
+  "duration_secs": 2.48
+ },
+ "L26.t1": {
+  "generation_id": "iVh2sIRp0HQblSpjxl9u",
+  "session_id": "oNf8HZk9jkCfgMwJionM",
+  "model_id": "eleven_v4",
+  "prompt": "[hesitant] So... how do I ride it?",
+  "duration_secs": 2.96
+ },
+ "L26.t2": {
+  "generation_id": "9coqQeXVBfFiYTgbJxOG",
+  "session_id": "k0Av7PJFkXh1hTECBpvR",
+  "model_id": "eleven_v4",
+  "prompt": "[hesitant] So... how do I ride it?",
+  "duration_secs": 3.04
+ },
+ "L27.t1": {
+  "generation_id": "zIHBcLJ9uDieUTSBXr4M",
+  "session_id": "cTjTP3H9wIbKQcCT4PI0",
+  "model_id": "eleven_v4",
+  "prompt": "[surprised] Oh. [pause] [sheepish] I sort of assumed you knew.",
+  "duration_secs": 3.68
+ },
+ "L27.t2": {
+  "generation_id": "qNJAdd2EBORXROOIexvm",
+  "session_id": "jYlodPHapOj48XNZUFsK",
+  "model_id": "eleven_v4",
+  "prompt": "[surprised] Oh. [pause] [sheepish] I sort of assumed you knew.",
+  "duration_secs": 3.92
+ },
+ "L28.t1": {
+  "generation_id": "Adud0UERWJs6n1SPhpCp",
+  "session_id": "j04AejvxfI1v80Qk2Xju",
+  "model_id": "eleven_v4",
+  "prompt": "[encouraging] [nervous] Okay! Left foot down. Then right. Eyes on the road.",
+  "duration_secs": 4.88
+ },
+ "L28.t2": {
+  "generation_id": "psg33pp5g3BgoqOqBzXl",
+  "session_id": "BVJL89ybwlwG1h4597Qu",
+  "model_id": "eleven_v4",
+  "prompt": "[encouraging] [nervous] Okay! Left foot down. Then right. Eyes on the road.",
+  "duration_secs": 4.8
+ },
+ "L29.t1": {
+  "generation_id": "XYI5vcG4cmZw7E7anwC4",
+  "session_id": "ZIAUNOh6sHyiyn0bQ2uu",
+  "model_id": "eleven_v4",
+  "prompt": "[pained] [quietly] Ow.",
+  "duration_secs": 1.28
+ },
+ "L29.t2": {
+  "generation_id": "8inqTnIXiuNadP1rwgOi",
+  "session_id": "wIkP49FAXAbhRE3kjjwd",
+  "model_id": "eleven_v4",
+  "prompt": "[pained] [quietly] Ow.",
+  "duration_secs": 1.28
+ },
+ "L30.t1": {
+  "generation_id": "kPUfdpYeYIHRKbwQhAfT",
+  "session_id": "4cfTBrfPyKIu6b16xbSa",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs] [shouting] Hey, everybody! The pelican's ridin' a bicycle!",
+  "duration_secs": 4.56
+ },
+ "L30.t2": {
+  "generation_id": "XwIMu3jZRhpT2kb2l5jK",
+  "session_id": "qHM6NQnxspasCby9D6ys",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs] [shouting] Hey, everybody! The pelican's ridin' a bicycle!",
+  "duration_secs": 4.64
+ },
+ "L31.t1": {
+  "generation_id": "5U7FbfMDIgUQ21qN1CrR",
+  "session_id": "Ui8EMbGJPWu9G1W7UWsY",
+  "model_id": "eleven_v4",
+  "prompt": "[gleeful] [mocking] Badly!",
+  "duration_secs": 1.44
+ },
+ "L31.t2": {
+  "generation_id": "FnMkwAOjnfRZOI0cYoz0",
+  "session_id": "iEO4H1DcyxA92qBxPBKA",
+  "model_id": "eleven_v4",
+  "prompt": "[gleeful] [mocking] Badly!",
+  "duration_secs": 1.36
+ },
+ "L32.t1": {
+  "generation_id": "24icSNcklDUv4mSyLHtU",
+  "session_id": "nn18MUHhW3s13Dtn6VNz",
+  "model_id": "eleven_v4",
+  "prompt": "[grumpy] [dryly] Laugh it up, Gus.",
+  "duration_secs": 2
+ },
+ "L32.t2": {
+  "generation_id": "iHaJcBwvNDkSSeU16HT8",
+  "session_id": "DLXrYBZe0ehvEka1zbwL",
+  "model_id": "eleven_v4",
+  "prompt": "[grumpy] [dryly] Laugh it up, Gus.",
+  "duration_secs": 2
+ },
+ "L33.t1": {
+  "generation_id": "UtnmGBreTySgRvxZQHfB",
+  "session_id": "kHuf2OTIZhYuNtqBgAZn",
+  "model_id": "eleven_v4",
+  "prompt": "[gently] [calmly] Don't look at your feet. Look where you want to go.",
+  "duration_secs": 3.2
+ },
+ "L33.t2": {
+  "generation_id": "HRYorPm9cTyghlfmFX9I",
+  "session_id": "hADawV0pG7KxtJUvVpQ4",
+  "model_id": "eleven_v4",
+  "prompt": "[gently] [calmly] Don't look at your feet. Look where you want to go.",
+  "duration_secs": 3.44
+ },
+ "L34.t1": {
+  "generation_id": "Lide6wEt2m1TedSAkDG5",
+  "session_id": "T1Bvu1D6j06eJwL644xQ",
+  "model_id": "eleven_v4",
+  "prompt": "[nervous] I'm doing it... [excited] I'm doing it! [ecstatic] I'm actually doing it!",
+  "duration_secs": 4.8
+ },
+ "L34.t2": {
+  "generation_id": "Ew3AGQB8ACUa3ttokB9t",
+  "session_id": "cCHpdHgzaOyef4gDZbJY",
+  "model_id": "eleven_v4",
+  "prompt": "[nervous] I'm doing it... [excited] I'm doing it! [ecstatic] I'm actually doing it!",
+  "duration_secs": 4.56
+ },
+ "L35.t1": {
+  "generation_id": "hrLbX1NMbWxOR1ZNMW6v",
+  "session_id": "jL0eX4sKaxeAJLChR8pE",
+  "model_id": "eleven_v4",
+  "prompt": "[overjoyed] [cheering] You're doing it!",
+  "duration_secs": 1.68
+ },
+ "L35.t2": {
+  "generation_id": "WXTa7B9EUUJnzqlI2ghN",
+  "session_id": "KvbRCZew1rAl11CJP812",
+  "model_id": "eleven_v4",
+  "prompt": "[overjoyed] [cheering] You're doing it!",
+  "duration_secs": 1.6
+ },
+ "L36.t1": {
+  "generation_id": "iOLBuvssDhpMJ0CXurH4",
+  "session_id": "86Gl1R6WFthKPtovgQ8w",
+  "model_id": "eleven_v4",
+  "prompt": "[grudgingly] Okay, okay. Not bad... [sarcastic] for a guy with a bucket on his face.",
+  "duration_secs": 5.6
+ },
+ "L36.t2": {
+  "generation_id": "Sd25y918eHRGxS6a28jh",
+  "session_id": "DvGqFNlsxlZeO3USKdWQ",
+  "model_id": "eleven_v4",
+  "prompt": "[grudgingly] Okay, okay. Not bad... [sarcastic] for a guy with a bucket on his face.",
+  "duration_secs": 5.6
+ },
+ "L37.t1": {
+  "generation_id": "CYxEIHsD0BYt0UUb3iWn",
+  "session_id": "PAmrkuZ4hfBNcpQDMvvc",
+  "model_id": "eleven_v4",
+  "prompt": "[cheerful] [indignant] It's called a pouch!",
+  "duration_secs": 2
+ },
+ "L37.t2": {
+  "generation_id": "n1e6XZKYuQOMuVjs8vCL",
+  "session_id": "ABRq12ql1Z4XWB2puFt1",
+  "model_id": "eleven_v4",
+  "prompt": "[cheerful] [indignant] It's called a pouch!",
+  "duration_secs": 1.92
+ },
+ "L38.t1": {
+  "generation_id": "z7juA4ESFa5TYBcXEFKi",
+  "session_id": "dNm1U0uJQdqwaloZCg4a",
+  "model_id": "eleven_v4",
+  "prompt": "[outraged] [shouting] Hey! That was my fish!",
+  "duration_secs": 2.32
+ },
+ "L38.t2": {
+  "generation_id": "5gi2O7vrovZfLnP4qaip",
+  "session_id": "SA55SustqsxhlhtJx9yD",
+  "model_id": "eleven_v4",
+  "prompt": "[outraged] [shouting] Hey! That was my fish!",
+  "duration_secs": 2.24
+ },
+ "L39.t1": {
+  "generation_id": "N0ppmpY2bkdDIev0wIKA",
+  "session_id": "wJObBWGjVcu9rKJO4cxH",
+  "model_id": "eleven_v4",
+  "prompt": "[casually] Hey, uh... quick question. [nervous] Did you draw brakes?",
+  "duration_secs": 4.16
+ },
+ "L39.t2": {
+  "generation_id": "nVCm44R2yCM1fdh6DV30",
+  "session_id": "ILVuBUIoYHuSlM8ZIgKf",
+  "model_id": "eleven_v4",
+  "prompt": "[casually] Hey, uh... quick question. [nervous] Did you draw brakes?",
+  "duration_secs": 4.08
+ },
+ "L40.t1": {
+  "generation_id": "RWucQveUlDt0420Ko5QP",
+  "session_id": "i9v24eeR2YPKlx5FDl5L",
+  "model_id": "eleven_v4",
+  "prompt": "[guilty] [small voice] Brakes?",
+  "duration_secs": 1.28
+ },
+ "L40.t2": {
+  "generation_id": "qDYnpSDJW9KaQnbvs374",
+  "session_id": "EFpfYQ7NCJZOz4vbtAGq",
+  "model_id": "eleven_v4",
+  "prompt": "[guilty] [small voice] Brakes?",
+  "duration_secs": 1.36
+ },
+ "L41.t1": {
+  "generation_id": "cARb57so3O3xnYUbl427",
+  "session_id": "DyRdA5eqpj3I5cA38OMQ",
+  "model_id": "eleven_v4",
+  "prompt": "[panicked] [shouting] Brakes! The things that make it stop!",
+  "duration_secs": 2.72
+ },
+ "L41.t2": {
+  "generation_id": "SyayK0LWkLnsILIp21r8",
+  "session_id": "t30X8OVdqwuORWX5t2nz",
+  "model_id": "eleven_v4",
+  "prompt": "[panicked] [shouting] Brakes! The things that make it stop!",
+  "duration_secs": 2.72
+ },
+ "L42.t1": {
+  "generation_id": "eiK0sXPdeg0cNqSylgwO",
+  "session_id": "asqKdhDUkV3hgcA0zCTT",
+  "model_id": "eleven_v4",
+  "prompt": "[panicked] [flustered] Drawing brakes! Drawing brakes!",
+  "duration_secs": 2.32
+ },
+ "L42.t2": {
+  "generation_id": "BuSoZcSkqb0EjwULEJ1W",
+  "session_id": "00yRkzWAq6yTLyAFJ6tu",
+  "model_id": "eleven_v4",
+  "prompt": "[panicked] [flustered] Drawing brakes! Drawing brakes!",
+  "duration_secs": 2.4
+ },
+ "L43.t1": {
+  "generation_id": "qckMaNw1F25Kf5msQ72e",
+  "session_id": "2bxWtmFGy50WBPoEj3EH",
+  "model_id": "eleven_v4",
+  "prompt": "[panicked] [high voice] That's a duck!",
+  "duration_secs": 1.36
+ },
+ "L43.t2": {
+  "generation_id": "wjaVcGDYlyYJZ7gTgBXu",
+  "session_id": "18mHoiShNZCwmnLQckGd",
+  "model_id": "eleven_v4",
+  "prompt": "[panicked] [high voice] That's a duck!",
+  "duration_secs": 1.36
+ },
+ "L44.t1": {
+  "generation_id": "ehAITtuGtZLnvPvSdy1u",
+  "session_id": "s2U4c9VDMdQSh5HMWc5L",
+  "model_id": "eleven_v4",
+  "prompt": "[flustered] Sorry! Um... [hopeful] parachute!",
+  "duration_secs": 3.12
+ },
+ "L44.t2": {
+  "generation_id": "FEYq6DWzZ5fPk6LSXfV6",
+  "session_id": "KRRWuWgIF0mcxlZch0q0",
+  "model_id": "eleven_v4",
+  "prompt": "[flustered] Sorry! Um... [hopeful] parachute!",
+  "duration_secs": 2.96
+ },
+ "L45.t1": {
+  "generation_id": "Oosx3GRDOJJGhB7UQORy",
+  "session_id": "eBNJZtmeXtWbQ5xuq6w3",
+  "model_id": "eleven_v4",
+  "prompt": "[exasperated] [shouting] That's an umbrella!",
+  "duration_secs": 1.76
+ },
+ "L45.t2": {
+  "generation_id": "e9jjtXFMIkomLA36q24S",
+  "session_id": "6Iz4VYIGMFvMXHcUySr8",
+  "model_id": "eleven_v4",
+  "prompt": "[exasperated] [shouting] That's an umbrella!",
+  "duration_secs": 1.68
+ },
+ "L46.t1": {
+  "generation_id": "M1t59X2GBHaNzzHWplDo",
+  "session_id": "aoE5g4PutOXB90Gecg4P",
+  "model_id": "eleven_v4",
+  "prompt": "[alarmed] [shouting] End of the pier! End of the pier!",
+  "duration_secs": 2.56
+ },
+ "L46.t2": {
+  "generation_id": "tSENbtKKPkFibHQSLnGJ",
+  "session_id": "2I0A25o9c0CujmbJaYMP",
+  "model_id": "eleven_v4",
+  "prompt": "[alarmed] [shouting] End of the pier! End of the pier!",
+  "duration_secs": 2.64
+ },
+ "L47.t1": {
+  "generation_id": "QH8525Zn8kb6zQClQoYc",
+  "session_id": "ojihZ12F3pCSzR5L3rTS",
+  "model_id": "eleven_v4",
+  "prompt": "[terrified] [screaming] Aaaaaaah!",
+  "duration_secs": 1.68
+ },
+ "L47.t2": {
+  "generation_id": "UPBZa9Hpsqg8A79OaDdy",
+  "session_id": "7yASZXXyB4CLQyofuAUP",
+  "model_id": "eleven_v4",
+  "prompt": "[terrified] [screaming] Aaaaaaah!",
+  "duration_secs": 1.68
+ },
+ "L48.t1": {
+  "generation_id": "yd5PXC9YL6emtXu5YsGz",
+  "session_id": "5rJGjnOv3NaEw9ZQ6FrL",
+  "model_id": "eleven_v4",
+  "prompt": "[softly] [tenderly] Percy. [pause] You don't need brakes.",
+  "duration_secs": 3.12
+ },
+ "L48.t2": {
+  "generation_id": "Ds9hChL3TEglz0uKPo20",
+  "session_id": "uqLNJg6xIfvldrc0yGMs",
+  "model_id": "eleven_v4",
+  "prompt": "[softly] [tenderly] Percy. [pause] You don't need brakes.",
+  "duration_secs": 3.12
+ },
+ "L49.t1": {
+  "generation_id": "tsLMzRzJ7nfYY64ioO8u",
+  "session_id": "85dpX1IToGrQQUQksHDw",
+  "model_id": "eleven_v4",
+  "prompt": "[softly] [warmly] You're a pelican.",
+  "duration_secs": 1.76
+ },
+ "L49.t2": {
+  "generation_id": "jAOxPjMRuWibiqmeyiTs",
+  "session_id": "Oe83mTFlEUJzBpziEy9z",
+  "model_id": "eleven_v4",
+  "prompt": "[softly] [warmly] You're a pelican.",
+  "duration_secs": 1.76
+ },
+ "L50.t1": {
+  "generation_id": "wZWHS4t5YZPATo8huMGw",
+  "session_id": "ukEfx80C5zkVBkq1j32E",
+  "model_id": "eleven_v4",
+  "prompt": "[slowly] [amazed] [softly] I'm a pelican.",
+  "duration_secs": 2
+ },
+ "L50.t2": {
+  "generation_id": "mCayY7XpV0TSz1GVjwcg",
+  "session_id": "bgV9raMWG33Rjtj71pLA",
+  "model_id": "eleven_v4",
+  "prompt": "[slowly] [amazed] [softly] I'm a pelican.",
+  "duration_secs": 2
+ },
+ "L51.t1": {
+  "generation_id": "LRTe5OvuYW9tNqhYDJYt",
+  "session_id": "llGdsSTtMyYhwymf2dHJ",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs] [exhilarated] I don't need brakes... [shouting] I've got WINGS!",
+  "duration_secs": 4.08
+ },
+ "L51.t2": {
+  "generation_id": "1iaAOHqGf5v0UoRDCgeI",
+  "session_id": "eNPBpRUQnzdo0E94g0Dm",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs] [exhilarated] I don't need brakes... [shouting] I've got WINGS!",
+  "duration_secs": 3.68
+ },
+ "L52.t1": {
+  "generation_id": "7Hl9PytTZlKeSDTgolui",
+  "session_id": "TwB1QdnDRXps6sNHUUP1",
+  "model_id": "eleven_v4",
+  "prompt": "[grudgingly] [dryly] Show-off.",
+  "duration_secs": 2.08
+ },
+ "L52.t2": {
+  "generation_id": "YnZX44IMguwmFSOTLItK",
+  "session_id": "GuBt93SUcPM28ZqRnLeV",
+  "model_id": "eleven_v4",
+  "prompt": "[grudgingly] [dryly] Show-off.",
+  "duration_secs": 1.68
+ },
+ "L53.t1": {
+  "generation_id": "kiOWMCB6XocDtjIq4BzP",
+  "session_id": "Q5UyRxRr7gITlnsXTp8V",
+  "model_id": "eleven_v4",
+  "prompt": "[sheepish] [softly] I'm sorry about the brakes. [sincere] I'm still learning.",
+  "duration_secs": 3.76
+ },
+ "L53.t2": {
+  "generation_id": "Ofr6ciqDqKZMrtMLr5q9",
+  "session_id": "FvIZNCdhUpibAZb2fNim",
+  "model_id": "eleven_v4",
+  "prompt": "[sheepish] [softly] I'm sorry about the brakes. [sincere] I'm still learning.",
+  "duration_secs": 3.84
+ },
+ "L54.t1": {
+  "generation_id": "bqeaswggGGUodZTejBJH",
+  "session_id": "uCBR9rspcGHeVlnC22Fa",
+  "model_id": "eleven_v4",
+  "prompt": "[warmly] Hey. [pause] Me too.",
+  "duration_secs": 2.24
+ },
+ "L54.t2": {
+  "generation_id": "ACD5AOBtOwbhg2HuxtKF",
+  "session_id": "qoqMHbzkdKKyT6G3mLCe",
+  "model_id": "eleven_v4",
+  "prompt": "[warmly] Hey. [pause] Me too.",
+  "duration_secs": 2.24
+ },
+ "L55.t1": {
+  "generation_id": "j4pahz1pwoGr3AEDVNIY",
+  "session_id": "qxyW2RZKmWtLbJvDsyu5",
+  "model_id": "eleven_v4",
+  "prompt": "[playful] [warmly] Same time tomorrow?",
+  "duration_secs": 1.68
+ },
+ "L55.t2": {
+  "generation_id": "FVBl1jnRgeFhCbyM8HXH",
+  "session_id": "IegfFMQM95cdfy352345",
+  "model_id": "eleven_v4",
+  "prompt": "[playful] [warmly] Same time tomorrow?",
+  "duration_secs": 1.6
+ },
+ "L56.t1": {
+  "generation_id": "t5esmXqv0Wo1JnNDBtUV",
+  "session_id": "YZE7ufxwRiZRfN54TMzu",
+  "model_id": "eleven_v4",
+  "prompt": "[delighted] [hopeful] Attempt four thousand, eight hundred and nineteen?",
+  "duration_secs": 3.2
+ },
+ "L56.t2": {
+  "generation_id": "hHWyWrwuKt4Gp5IwZMVI",
+  "session_id": "64wGR06N5svkVYML5XID",
+  "model_id": "eleven_v4",
+  "prompt": "[delighted] [hopeful] Attempt four thousand, eight hundred and nineteen?",
+  "duration_secs": 3.2
+ },
+ "L57.t1": {
+  "generation_id": "w7Ep35nErbanzuIEHfYj",
+  "session_id": "esvznvWc1jeUFTSs1Y86",
+  "model_id": "eleven_v4",
+  "prompt": "[dryly] [teasing] Let's start with the brakes.",
+  "duration_secs": 2.16
+ },
+ "L57.t2": {
+  "generation_id": "3ta4SG5jcstH94t0ZHsh",
+  "session_id": "nGyCiLr4IZjeUiGlqs2A",
+  "model_id": "eleven_v4",
+  "prompt": "[dryly] [teasing] Let's start with the brakes.",
+  "duration_secs": 2.32
+ },
+ "L58.t1": {
+  "generation_id": "tkjqCfAMcJZTlbvv2iSy",
+  "session_id": "Blx5JLkZ7Kh9HkZUZram",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs softly] Deal.",
+  "duration_secs": 2.24
+ },
+ "L58.t2": {
+  "generation_id": "rfNKoHdwm4JFhbMteIRQ",
+  "session_id": "kDKtBN71Z2e7acmAsfnS",
+  "model_id": "eleven_v4",
+  "prompt": "[laughs softly] Deal.",
+  "duration_secs": 2
+ },
+ "L59.t1": {
+  "generation_id": "jcmrlhjEZkoMEMZcSiiB",
+  "session_id": "68dAPDRcK9duZTq4MXIs",
+  "model_id": "eleven_v4",
+  "prompt": "[deadpan] Oh, look. [pause] The wheel's back.",
+  "duration_secs": 3.36
+ },
+ "L59.t2": {
+  "generation_id": "z6kvpfEMjRBuOLPwP0YC",
+  "session_id": "xjFPa7iXn41coBdv6MR0",
+  "model_id": "eleven_v4",
+  "prompt": "[deadpan] Oh, look. [pause] The wheel's back.",
+  "duration_secs": 3.2
+ }
+}

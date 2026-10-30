@@ -22,7 +22,7 @@ NAME = "s09_hill"
 LOOK = {"grain": 0.9, "vignette": 0.75}
 
 BEATS = [
-    Mark("climb"), Wait(3.2), Mark("crest"), Wait(1.6), Say("L39", gap=0.0), Wait(1.1),
+    Mark("climb"), Wait(2.6), Mark("crest"), Wait(1.3), Say("L39", gap=0.0), Wait(0.9),
     Say("L40", gap=0.0), Mark("tip"), Wait(1.3), Say("L41", gap=0.0), Say("L42", gap=0.1),
     Mark("duck"), Wait(1.0), Say("L43", gap=0.0), Say("L44", gap=0.15), Mark("umbrella"), Wait(1.3),
     Say("L45", gap=-0.15), Mark("pier"), Wait(0.7), Say("L46", gap=0.0), Say("L47", gap=0.1),

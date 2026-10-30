@@ -22,9 +22,8 @@ NAME = "s11_beach"
 LOOK = {"grain": 0.9, "vignette": 0.8}
 
 BEATS = [
-    Mark("land"), Wait(3.4), Say("L53", gap=0.2), Say("L54", gap=0.6), Wait(1.3), Say("L55", gap=0.3),
-    Say("L56", gap=0.45), Say("L57", gap=0.45), Say("L58", gap=0.25), Wait(0.4), Mark("rideoff"),
-    Wait(4.6), Mark("lineart"), Wait(3.6),
+    Mark("land"), Wait(2.6), Say("L53", gap=0.2), Say("L54", gap=0.6), Wait(1.0), Say("L55", gap=0.3),
+    Say("L56", gap=0.45), Say("L57", gap=0.45), Say("L58", gap=0.25), Wait(0.4), Mark("rideoff"), Wait(4.0), Mark("lineart"), Wait(3.0),
 ]
 
 TOUCH = 1.7          # seconds after "land" when the wheels touch the sand

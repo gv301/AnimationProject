@@ -21,8 +21,8 @@ NAME = "s08_ride"
 LOOK = {"grain": 0.8, "vignette": 0.6}
 
 BEATS = [
-    Mark("bell"), Wait(2.6), Say("L36", gap=0.0), Say("L37", gap=0.3), Wait(1.2), Mark("fish"),
-    Wait(1.15), Mark("catch"), Wait(0.5), Say("L38", gap=0.0), Wait(2.2),
+    Mark("bell"), Wait(2.0), Say("L36", gap=0.0), Say("L37", gap=0.3), Wait(1.0), Mark("fish"),
+    Wait(1.15), Mark("catch"), Wait(0.5), Say("L38", gap=0.0), Wait(1.6),
 ]
 
 SPEED = 760.0

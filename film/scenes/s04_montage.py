@@ -21,7 +21,7 @@ GAGS = [("g1", 3, "square"), ("g2", 17, "spaghetti"), ("g3", 62, "sixlegs"), ("g
 BEATS = [
     Mark("g1"), Wait(0.72), Mark("g2"), Wait(0.72), Mark("g3"), Wait(0.72), Mark("g4"), Wait(0.3),
     Say("L09", gap=0.0), Wait(0.45), Mark("g5"), Wait(0.72), Mark("g6"), Wait(0.72), Mark("g7"),
-    Wait(0.35), Say("L10", gap=0.0), Wait(0.4), Mark("spin"), Wait(1.5),
+    Wait(0.35), Say("L10", gap=0.0), Wait(0.4), Mark("spin"), Wait(1.25),
 ]
 
 
