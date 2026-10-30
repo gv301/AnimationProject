@@ -3,7 +3,7 @@
   COAST  x in [-40, 90]   scenes 6 and 7: the seaside road, fence, cypresses, the crash hedge
   TOWN   x in [170, 260]  scene 8: harbour basin, boats, a row of pastel houses with bunting
   HILL   x in [360, 545]  scenes 9 and 10: the road over the crest, the long drop, the pier, open sea
-  BEACH  x in [650, 760]  scene 11: sand, gentle surf, Gus's post
+  BEACH  x in [1090, 1220] scene 11: sand, gentle surf, Gus's post (far down the coast)
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from . import materials as M
 from .lib import rand
 
 K = 0.003
-COAST_X, TOWN_X, HILL_X, BEACH_X = 0.0, 200.0, 400.0, 700.0
+COAST_X, TOWN_X, HILL_X, BEACH_X = 0.0, 200.0, 400.0, 1150.0
 
 
 class Mats:
@@ -206,7 +206,7 @@ def clouds(col):
     ln.new(dens.outputs["Value"], vol.inputs["Density"])
     ln.new(vol.outputs["Volume"], out.inputs["Volume"])
     for k in range(14):
-        x = -400 + 1400 * rand("cloud", k)
+        x = -400 + 2000 * rand("cloud", k)
         y = 900 + 1500 * rand("cloud", k, "y")
         z = 260 + 380 * rand("cloud", k, "z")
         s = 120 + 160 * rand("cloud", k, "s")
@@ -328,19 +328,21 @@ def hill(col, mats, course):
     g = hl.z
     _road("hill_road", x0, x_pier, col, mats, ground=g, step=0.4)
     # the hillside falling away to the sea on the right, rising inland on the left
-    nx, ny = int((x_pier + 30 - x0) / 2.0), 22
+    nx, ny = int((x_pier + 30 - x0) / 2.0), 34
     verts, faces = [], []
     for i in range(nx + 1):
         x = x0 + (x_pier + 30 - x0) * i / nx
         base = g(min(x, x_pier))
         for j in range(ny + 1):
-            y = -60 + 120 * j / ny
+            y = -180 + 240 * j / ny
             if abs(y) <= 2.2:
                 z = base - 0.05
             elif y > 0:
                 z = base - 0.05 - (y - 2.2) * (0.35 + 0.25 * math.sin(x * 0.05)) - max(0.0, x - x_pier) * 0.4
             else:
                 z = base - 0.05 + (-y - 2.2) * 0.18 + 1.5 * math.sin(x * 0.07 + y * 0.1)
+            # past the start of the pier every part of the headland slopes down into the sea
+            z -= max(0.0, x - (x_pier - 8.0)) * (0.55 if abs(y) > 2.2 else 0.0)
             verts.append((x, y, max(z, -3.0)))
     for i in range(nx):
         for j in range(ny):
@@ -402,6 +404,8 @@ def beach(col, mats):
             y = -40 + 52 * j / ny
             z = 0.12 - max(0.0, y - 4.0) * 0.06 + 0.25 * math.sin(x * 0.11 + y * 0.2) * max(0.0, -y / 40) \
                 + max(0.0, -y - 12) * 0.08
+            # the ends of the beach slope away under the sea instead of stopping dead
+            z -= max(0.0, abs(x - (x0 + x1) / 2) - 45.0) * 0.12
             verts.append((x, y, z))
     for i in range(nx):
         for j in range(ny):
@@ -416,3 +420,66 @@ def beach(col, mats):
                           loc=(x, -18 - 8 * rand("dune", k, "y"), 0.9))
         lib.subsurf(b, 1)
     return sand
+
+
+# ----------------------------------------------------------------------------- dressing
+
+def flowers(col, mats, regions, count=700):
+    """Wildflowers in the verges: a few little blossom meshes repeated as linked duplicates."""
+    cols = ["#f4d03f", "#ffffff", "#e74c3c", "#c39bd3", "#f39c12"]
+    srcs = []
+    for i, c in enumerate(cols):
+        m = M.surface(f"flower_{i}", c, rough=0.5, sss=0.3)
+        o = lib.ellipsoid(f"flower_src_{i}", (0.035, 0.035, 0.02), col, m, segs=8, rings=5)
+        lib.cylinder(f"flower_stem_{i}", (0, 0, -0.18), (0, 0, -0.01), 0.004, col, mats.blade, segs=5, parent=o)
+        o.hide_render = o.hide_viewport = True
+        for ch in o.children:
+            ch.hide_render = ch.hide_viewport = True
+        srcs.append(o)
+    k = 0
+    for (x0, x1, y0, y1, ground) in regions:
+        for j in range(count):
+            src = srcs[k % len(srcs)]
+            x = x0 + (x1 - x0) * rand("fl", k, "x")
+            y = y0 + (y1 - y0) * rand("fl", k, "y")
+            o = bpy.data.objects.new(f"flower_{k}", src.data)
+            o.location = (x, y, ground(x) + 0.18 + 0.06 * rand("fl", k, "z"))
+            col.objects.link(o)
+            k += 1
+
+
+def bay(col, mats):
+    """Headlands and islands along the horizon, sailboats and gulls over the water."""
+    far = M.surface("far_land", "#6d7f74", rough=0.9, bump=(3.0, 0.6, "noise"), mottle=("#8a9a83", 0.4))
+    for k in range(9):
+        x = -300 + 1900 * rand("isle", k)
+        y = 420 + 380 * rand("isle", k, "y")
+        s = 40 + 90 * rand("isle", k, "s")
+        o = lib.ellipsoid(f"isle_{k}", (s * 2.2, s, s * 0.32), col, far, segs=18, rings=8, loc=(x, y, -s * 0.06))
+        o.visible_shadow = False
+    for k in range(10):
+        x = -100 + 900 * rand("sailboat", k)
+        y = 70 + 240 * rand("sailboat", k, "y")
+        hull = lib.ellipsoid(f"sailboat_{k}", (1.6, 0.55, 0.4), col, mats.hull[k % 4], segs=12, rings=6,
+                             loc=(x, y, -0.05), warp=lambda a, b, c: (a, b, min(c, 0.15)))
+        lib.cylinder(f"sailboat_mast_{k}", (x, y, 0.1), (x, y, 3.6), 0.04, col, mats.white, segs=6)
+        lib.mesh_object(f"sailboat_sail_{k}", [(x + 0.05, y, 0.5), (x + 0.05, y, 3.4), (x + 1.5, y, 0.5)],
+                        [(0, 1, 2)], col, mats.sail, smooth=False)
+        del hull
+    gull = M.surface("far_gull", "#f2f2f2", rough=0.6)
+    for k in range(14):
+        x = -60 + 860 * rand("bird", k)
+        y = 40 + 160 * rand("bird", k, "y")
+        z = 12 + 25 * rand("bird", k, "z")
+        s = 0.5 + 0.3 * rand("bird", k, "s")
+        lib.mesh_object(f"sky_gull_{k}", [(x - s, y, z + 0.25 * s), (x, y, z), (x + s, y, z + 0.25 * s),
+                                          (x, y + 0.08, z - 0.04)], [(0, 1, 3), (1, 2, 3)], col, gull, smooth=False)
+
+
+def bushes(col, mats, xs, ground, y_range=(-18.0, -5.0), seed="bush"):
+    for k, x in enumerate(xs):
+        y = y_range[0] + (y_range[1] - y_range[0]) * rand(seed, k)
+        r = 0.6 + 0.7 * rand(seed, k, "r")
+        b = lib.ellipsoid(f"{seed}_{k}", (r * 1.3, r, r * 0.8), col, mats.leaves, segs=12, rings=8,
+                          loc=(x, y, ground(x) + r * 0.5))
+        lib.subsurf(b, 1)

@@ -101,9 +101,16 @@ def build(scene, film):
     hill = sets.hill(env, mats, film.course)
     sets.beach(env, mats)
     sets.clouds(env)
-    sea, ocean = world.ocean(env, size=60, resolution=12, loc=(0, 90, -0.25), repeat=3)
+    sets.bay(env, mats)
+    flat = lambda x: 0.0
+    sets.flowers(env, mats, [(sets.COAST_X - 40, sets.COAST_X + 90, 2.2, 6.0, flat),
+                             (sets.COAST_X - 40, sets.COAST_X + 90, -2.2, -9.0, flat),
+                             (sets.HILL_X - 30, sets.HILL_X + 60, -2.4, -14.0, hill.z)], count=500)
+    sets.bushes(env, mats, [sets.HILL_X - 30 + 6.5 * k for k in range(22)], hill.z, (-16.0, -4.0), "hillbush")
+    sets.bushes(env, mats, [sets.COAST_X - 30 + 7.0 * k for k in range(18)], flat, (-16.0, -6.0), "coastbush")
+    sea, ocean = world.ocean(env, size=80, resolution=12, loc=(0, 90, -0.25), repeat=5)
     world.far_sea(env)
-    world.haze(env, centre=(350, 0, 0), size=(1100.0, 900.0, 140.0))
+    world.haze(env, centre=(600, 0, 0), size=(1800.0, 900.0, 140.0))
     sky, _, sun = world.sky(scene, 9.0, SUN_DAY)
     world.setup_render(scene)
     world.compositor(scene, 0.55)
@@ -114,6 +121,8 @@ def build(scene, film):
     leaves = make_leaves(props, percy)
 
     poses = bike_poses(film, hill)
+    rig_lights(film, poses, chars)
+    fx(film, poses, props)
     animate_bike(film, bike, poses)
     animate_percy(film, percy, bike, poses)
     animate_gus(film, gus, poses)
@@ -486,6 +495,91 @@ def animate_props(film, poses, fish, duck, umbrella, leaves, percy):
         lib.bake(o, "scale", fr, l_s)
 
 
+# ============================================================================= lights and effects
+
+def rig_lights(film, poses, col):
+    """A soft fill from the camera side and a rim from behind, travelling with Percy,
+    so he always separates from the background (cool by day, warm at sunset)."""
+    fill = bpy.data.lights.new("fill", "AREA")
+    fill.size = 2.5
+    rim = bpy.data.lights.new("rim", "AREA")
+    rim.size = 1.2
+    lights = []
+    for light, off in ((fill, (1.2, -3.0, 1.6)), (rim, (-1.0, 2.2, 2.0))):
+        o = bpy.data.objects.new(light.name, light)
+        col.objects.link(o)
+        lights.append((o, Vector(off)))
+    fr = film.frames
+    for o, off in lights:
+        locs, rots = [], []
+        for f in fr:
+            p = percy_world(poses, f, (0.3, 0, 0.8))
+            locs.append(p + off)
+            rots.append((-off).to_track_quat("-Z", "Y").to_euler())
+        lib.bake(o, "location", fr, locs)
+        lib.bake(o, "rotation_euler", fr, rots)
+    for sc in SKY:
+        a, b = film.scene_range(sc)
+        if b < fr[0] or a > fr[-1]:
+            continue
+        sunset = sc in ("s09_hill", "s10_flight", "s11_beach")
+        for f in (max(a, fr[0]), min(b, fr[-1])):
+            fill.energy = 120.0 if sunset else 60.0
+            fill.color = (1.0, 0.78, 0.6) if sunset else (0.85, 0.9, 1.0)
+            rim.energy = 260.0 if sunset else 160.0
+            rim.color = (1.0, 0.62, 0.35) if sunset else (0.9, 0.95, 1.0)
+            for light in (fill, rim):
+                light.keyframe_insert("energy", frame=f)
+                light.keyframe_insert("color", frame=f)
+
+
+def burst(name, col, mat, film, frame0, origin, n, speed, up, life, size, spread=1.0, gravity=9.8, seed=0):
+    """A spray of little pieces (leaves, sand, droplets) thrown from a point, falling and fading."""
+    fr = [f for f in film.frames]
+    src = lib.ellipsoid(name + "_src", (size, size * 0.7, size * 0.35), col, mat, segs=8, rings=5)
+    src.hide_render = src.hide_viewport = True
+    for i in range(n):
+        o = bpy.data.objects.new(f"{name}_{i}", src.data)
+        col.objects.link(o)
+        a = math.tau * lib.rand(name, i, seed)
+        v = Vector((math.cos(a) * spread * speed * (0.4 + lib.rand(name, i, "v")),
+                    math.sin(a) * spread * speed * (0.4 + lib.rand(name, i, "w")),
+                    up * (0.5 + lib.rand(name, i, "u"))))
+        locs, scales, rots = [], [], []
+        for f in fr:
+            t = (f - frame0) / FPS
+            if 0 <= t <= life:
+                p = Vector(origin) + v * t + Vector((0, 0, -0.5 * gravity * t * t))
+                p.z = max(p.z, Vector(origin).z - 0.4)
+                s = 1.0 - (t / life) ** 3
+            else:
+                p, s = Vector((0, 0, -50)), 0.0
+            locs.append(p)
+            scales.append((s, s, s))
+            rots.append((t * 7 * lib.rand(name, i, "r"), t * 5, 0))
+        lib.bake(o, "location", fr, locs)
+        lib.bake(o, "scale", fr, scales)
+        lib.bake(o, "rotation_euler", fr, rots)
+
+
+def fx(film, poses, col):
+    leaf = M.surface("fx_leaf", "#5aa337", rough=0.6, sss=0.3)
+    sand = M.surface("fx_sand", "#e2c48f", rough=0.9)
+    drop = M.surface("fx_drop", "#e8f6ff", rough=0.05, spec=0.9, coat=1.0)
+    s7, s8, s11 = "s07_learning", "s08_ride", "s11_beach"
+    crash = film.f(s7, "crash")
+    burst("fx_leaves", col, leaf, film, crash, percy_world(poses, crash, (0.4, 0.3, 0.6)), 34, 2.4, 3.2, 1.6, 0.035)
+    emerge = film.f(s7, "emerge")
+    burst("fx_leaves2", col, leaf, film, emerge, percy_world(poses, emerge, (0.3, 0.0, 1.0)), 18, 1.6, 2.6, 1.4, 0.03,
+          seed=1)
+    fish = film.f(s8, "fish")
+    bill = percy_world(poses, fish, (0.62, 0.0, 0.95))
+    burst("fx_splash", col, drop, film, fish, (bill.x - 1.2, 6.0, -0.2), 40, 1.2, 4.2, 1.1, 0.02)
+    touch = int(round((film.cue(s11, "land") + 1.7) * FPS))
+    burst("fx_sand", col, sand, film, touch, percy_world(poses, touch, (-0.3, 0.0, -0.4)), 60, 1.8, 2.4, 1.2, 0.018,
+          seed=2)
+
+
 # ============================================================================= world over time
 
 SKY = {   # scene: (sun elevation at start, at end, azimuth)
@@ -497,7 +591,7 @@ SKY = {   # scene: (sun elevation at start, at end, azimuth)
     "s11_beach": (2.4, 0.8, SUN_SET),
 }
 OCEAN = {"s06_transform": (0, 98), "s07_learning": (10, 98), "s08_ride": (210, 95), "s09_hill": (500, 40),
-         "s10_flight": (540, 40), "s11_beach": (700, 95)}
+         "s10_flight": (540, 40), "s11_beach": (1150, 95)}
 
 
 def animate_world(film, sea, sky, sun):

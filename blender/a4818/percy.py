@@ -23,7 +23,7 @@ HIP = Vector((0.07, 0.0, 0.05))
 HIP_SIDE = 0.095
 THIGH, SHIN = 0.13, 0.26
 SHOULDER = Vector((0.17, 0.0, 0.29))
-HEAD = Vector((0.33, 0.0, 0.98))
+HEAD = Vector((0.31, 0.0, 0.87))
 
 
 def loft(name, pts, widths, heights, col, mat, segs=20, parent=None, cap=True, lateral=Vector((0, 1, 0)),
@@ -77,13 +77,13 @@ class Percy:
         white = M.surface("percy_feathers", "#f7f3ec", rough=0.62, sheen=0.55, sheen_tint=(1.0, 0.95, 0.9),
                           sss=0.08, sss_radius=(0.5, 0.3, 0.2), sweep=sweep, flat="#ffffff",
                           bump=(55.0, 0.18, "wave"))
-        cream = M.surface("percy_face", "#f6e7cf", rough=0.55, sheen=0.4, sweep=sweep, flat="#fbf0dc")
+        cream = M.surface("percy_face", "#f7dcc0", rough=0.5, sheen=0.3, sss=0.15, sweep=sweep, flat="#fbe6cf")
         black = M.surface("percy_primaries", "#17161a", rough=0.45, sheen=0.5, sheen_tint=(0.6, 0.65, 0.8),
                           sweep=sweep, flat="#222126", bump=(80.0, 0.12, "wave"))
         bill = M.surface("percy_bill", "#f08a12", rough=0.3, sss=0.2, sss_radius=(1.0, 0.4, 0.1), coat=0.35,
                          sweep=sweep, flat="#f6a43a", mottle=("#f7b52a", 6.0))
         tip = M.surface("percy_bill_tip", "#e2552c", rough=0.3, coat=0.4, sweep=sweep, flat="#e8613a")
-        pouch = M.surface("percy_pouch", "#f0864f", rough=0.38, sss=0.4, sss_radius=(1.0, 0.35, 0.2),
+        pouch = M.surface("percy_pouch", "#ec7f4a", rough=0.38, sss=0.4, sss_radius=(1.0, 0.35, 0.2),
                           sweep=sweep, flat="#f4ae8e")
         leg = M.surface("percy_legs", "#ee7a12", rough=0.45, sss=0.2, sss_radius=(1.0, 0.4, 0.1), sweep=sweep,
                         flat="#f39132", bump=(140.0, 0.15, "noise"))
@@ -117,7 +117,7 @@ class Percy:
                 z2 = -0.13 + (z2 + 0.13) * 0.4
             return (x, y * f, z2)
 
-        body = lib.ellipsoid("percy_body_mesh", (0.36, 0.2, 0.215), c, white, segs=32, rings=22,
+        body = lib.ellipsoid("percy_body_mesh", (0.39, 0.225, 0.235), c, white, segs=32, rings=22,
                              loc=(0.0, 0.0, 0.2), parent=self.body_pivot, warp=egg)
         body.rotation_euler = (0, math.radians(-8), 0)
         self._m(body)
@@ -126,9 +126,9 @@ class Percy:
         tail.rotation_euler = (0, math.radians(-14), 0)
         self._m(tail)
         # neck: an S-curve whose top rings are hooked to the head
-        pts = [Vector(p) for p in ((0.2, 0, 0.3), (0.27, 0, 0.47), (0.24, 0, 0.6), (0.21, 0, 0.72),
-                                    (0.25, 0, 0.84), (0.31, 0, 0.93))]
-        radii = [0.115, 0.088, 0.074, 0.068, 0.064, 0.064]
+        pts = [Vector(p) for p in ((0.2, 0, 0.3), (0.29, 0, 0.44), (0.27, 0, 0.56), (0.21, 0, 0.66),
+                                    (0.22, 0, 0.76), (0.29, 0, 0.83))]
+        radii = [0.13, 0.104, 0.088, 0.08, 0.076, 0.074]
         fine, fr = _resample(pts, radii, 26)
         self.neck = lib.tube("percy_neck", fine, fr, c, white, segs=18, parent=self.body_pivot)
         self._m(self.neck)
@@ -139,13 +139,13 @@ class Percy:
     def _head(self, white, cream, bill, tip, pouch, eye_w, iris, ring):
         c = self.col
         self.head = lib.empty("percy_head", c, loc=HEAD, parent=self.body_pivot, size=0.15)
-        skull = lib.ellipsoid("percy_skull", (0.14, 0.108, 0.118), c, white, segs=28, rings=18,
+        skull = lib.ellipsoid("percy_skull", (0.155, 0.12, 0.13), c, white, segs=28, rings=18,
                               parent=self.head,
                               warp=lambda x, y, z: (x + 0.025 * max(0.0, z / 0.105), y * (1 - 0.15 * max(0, x / 0.125)),
                                                     z))
         self._m(skull)
-        face = lib.ellipsoid("percy_face", (0.07, 0.1, 0.06), c, cream, segs=20, rings=12,
-                             loc=(0.075, 0.0, -0.01), parent=self.head)
+        face = lib.ellipsoid("percy_face", (0.085, 0.112, 0.07), c, cream, segs=20, rings=12,
+                             loc=(0.085, 0.0, 0.0), parent=self.head)
         self._m(face)
         # crest: the scruffy tuft of the 2D design
         for k in range(5):
@@ -156,16 +156,19 @@ class Percy:
             self._m(lib.tube(f"percy_crest_{k}", [base, mid, tipp], [0.012, 0.007, 0.002], c, white, segs=8,
                              parent=self.head))
         # upper mandible: long, flattened, with a hooked tip
-        L = 0.62
-        n = 12
+        L = 0.68
+        n = 14
         pts, w, h = [], [], []
         for k in range(n + 1):
             u = k / n
             pts.append((0.1 + L * u, 0.0, 0.012 - 0.05 * u * u + (-0.022 * max(0.0, (u - 0.92) / 0.08) ** 2)))
-            w.append(0.058 * (1 - 0.5 * u) + 0.01)
-            h.append(0.02 * (1 - 0.4 * u) + 0.006)
+            w.append(0.068 * (1 - 0.5 * u) + 0.012)
+            h.append(0.022 * (1 - 0.4 * u) + 0.007)
         self.bill_upper = loft("percy_bill_upper", pts, w, h, c, bill, segs=18, parent=self.head)
         self._m(self.bill_upper)
+        ridge = [(p[0], 0.0, p[2] + h[i] * 0.85) for i, p in enumerate(pts)][:-1]
+        self._m(loft("percy_bill_ridge", ridge, [0.012 * (1 - 0.5 * k / len(ridge)) for k in range(len(ridge))],
+                     [0.006] * len(ridge), c, tip, segs=10, parent=self.head))
         hook = lib.ellipsoid("percy_bill_hook", (0.03, 0.016, 0.02), c, tip, segs=14, rings=8,
                              loc=(0.1 + L - 0.006, 0.0, -0.05), parent=self.head)
         self._m(hook)
@@ -184,9 +187,9 @@ class Percy:
             u = k / n
             sag = math.sin(math.pi * min(1.0, u / 0.85)) ** 0.8
             pts.append((0.02 + L * 0.82 * u, 0.0, -0.03 - 0.042 * u * u))
-            w.append(0.03 * (1 - 0.4 * u) + 0.012 * sag)
-            h.append(0.008 + 0.04 * sag)
-            off.append((0, 0, -0.03 * sag))
+            w.append(0.036 * (1 - 0.35 * u) + 0.016 * sag)
+            h.append(0.009 + 0.062 * sag)
+            off.append((0, 0, -0.048 * sag))
         self.pouch = loft("percy_pouch", pts, w, h, c, pouch, segs=18, parent=self.jaw, offsets=off)
         self._m(self.pouch)
         self._pouch_key()
@@ -194,18 +197,18 @@ class Percy:
         self.lids = []
         for side in (-1, 1):
             eye = lib.empty(f"percy_eye_{side}", c, loc=(0.05, side * 0.088, 0.035), parent=self.head, size=0.03)
-            self._m(lib.ellipsoid(f"percy_eyeball_{side}", (0.032, 0.032, 0.032), c, eye_w, segs=20, rings=14,
+            self._m(lib.ellipsoid(f"percy_eyeball_{side}", (0.037, 0.037, 0.037), c, eye_w, segs=20, rings=14,
                                   parent=eye))
-            self._m(lib.ellipsoid(f"percy_iris_{side}", (0.019, 0.008, 0.019), c, iris, segs=18, rings=10,
-                                  loc=(0.01, side * 0.026, 0.003), parent=eye))
-            self._m(lib.torus(f"percy_ring_{side}", 0.021, 0.0035, c, ring, segs=24, ring=6,
-                              loc=(0.01, side * 0.025, 0.003), parent=eye, axis="Z")).rotation_euler = (
+            self._m(lib.ellipsoid(f"percy_iris_{side}", (0.023, 0.009, 0.023), c, iris, segs=18, rings=10,
+                                  loc=(0.011, side * 0.03, 0.003), parent=eye))
+            self._m(lib.torus(f"percy_ring_{side}", 0.025, 0.004, c, ring, segs=24, ring=6,
+                              loc=(0.011, side * 0.029, 0.003), parent=eye, axis="Z")).rotation_euler = (
                 math.radians(90), 0, 0)
             self._m(lib.ellipsoid(f"percy_glint_{side}", (0.004, 0.002, 0.004), c,
                                   M.surface("eye_glint", "#ffffff", emission="#ffffff", strength=4.0),
-                                  segs=8, rings=6, loc=(0.017, side * 0.033, 0.012), parent=eye))
+                                  segs=8, rings=6, loc=(0.02, side * 0.038, 0.014), parent=eye))
             lid = lib.empty(f"percy_lid_{side}", c, parent=eye, size=0.02)
-            verts, faces = _dome(0.0355, 20, 8)
+            verts, faces = _dome(0.041, 20, 8)
             dome = lib.mesh_object(f"percy_lidmesh_{side}", verts, faces, c, white, True, lid)
             lib._weld(dome)
             dome.rotation_euler = (0, 0, 0 if side > 0 else math.pi)
@@ -250,6 +253,11 @@ class Percy:
                                                         (-0.3, side * 0.035, -0.06)],
                          [0.07, 0.08, 0.04], [0.02, 0.025, 0.012], c, white, segs=14, parent=grip,
                          lateral=Vector((0, 0, 1))))
+            for k in range(6):
+                root = Vector((-0.16 - 0.035 * k, side * (0.07 + 0.004 * k), -0.05 - 0.01 * k))
+                tipp = root + Vector((-0.28 + 0.02 * k, side * 0.012, 0.035 - 0.006 * k))
+                self._m(feather(f"percy_grip_primary_{side}_{k}", root, tipp, 0.03, c, black, parent=grip,
+                                curl=0.01))
             for k in range(5):
                 a = -0.6 + 0.3 * k
                 root = Vector((0.24, side * 0.07, -0.1))
@@ -319,7 +327,7 @@ class Percy:
         """Hook the neck's upper rings to the head and its middle to a mid empty (call once built)."""
         bpy.context.view_layer.update()
         segs, rings = self._neck_segs, self._neck_rings
-        self.neck_mid = lib.empty("percy_neck_mid", self.col, loc=(0.23, 0.0, 0.66), parent=self.body_pivot,
+        self.neck_mid = lib.empty("percy_neck_mid", self.col, loc=(0.22, 0.0, 0.6), parent=self.body_pivot,
                                   size=0.05)
         bpy.context.view_layer.update()
         for name, target, weight in (("head", self.head, lambda u: lib.smoothstep(0.55, 1.0, u)),
