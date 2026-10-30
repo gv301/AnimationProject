@@ -9,6 +9,7 @@ so the 3D picture lands on the same frames as the 2D film's soundtrack.
 from __future__ import annotations
 
 import argparse
+import bisect
 import json
 import math
 import sys
@@ -41,6 +42,16 @@ class Film3D:
         self.frames = [r["f"] for r in rows]
         self.scenes = anim["scenes"]
         self.course = next((r["course"] for r in anim["frames"] if "course" in r), None)
+        # frame_start is rounded from seconds, so it can land a frame before the first frame the
+        # rows give the scene; cut where the rows do, so cameras, sky and the bike change together
+        first = {}
+        for r in anim["frames"]:
+            first.setdefault(r["scene"], r["f"])
+        self.ranges = {sc: [s["frame_start"], s["frame_end"]] for sc, s in self.scenes.items()}
+        names = list(self.scenes)
+        for prev, sc in zip(names, names[1:]):
+            if sc in first:
+                self.ranges[prev][1] = self.ranges[sc][0] = first[sc]
 
     def cue(self, scene, name):
         s = self.scenes[scene]
@@ -50,8 +61,7 @@ class Film3D:
         return int(round((self.cue(scene, name) + dt) * FPS))
 
     def scene_range(self, scene):
-        s = self.scenes[scene]
-        return s["frame_start"], s["frame_end"]
+        return tuple(self.ranges[scene])
 
 
 def blink(t, seed=0):
@@ -132,6 +142,7 @@ def build(scene, film):
     animate_haze(film, haze_vol)
     animate_transformation(film, sweep_bike, sweep_percy, bike, percy)
     cameras(film, scene, poses, hill, percy)
+    hold_jumps(film, scene)
 
 
 # ============================================================================= motion
@@ -669,6 +680,46 @@ def animate_transformation(film, sweep_bike, sweep_percy, bike, percy):
 class Shot:
     def __init__(self, name, a, b, place, lens=40.0, fstop=4.0):
         self.name, self.a, self.b, self.place, self.lens, self.fstop = name, a, b, place, lens, fstop
+
+
+def hold_jumps(film, scene):
+    """Keep motion blur from smearing anything along a jump between two frames.
+
+    The sets sit hundreds of metres apart, so at each scene change the bike, Gus, the lights
+    and the following camera jump, and props pop in from where they wait out of shot. With
+    linear keys the shutter would sweep them along the jump. Instead the shutter opens on the
+    frame and the key before each jump holds, so the jump lands cleanly on the next frame:
+    every frame's picture is unchanged, only its blur.
+    """
+    scene.render.motion_blur_position = "START"
+    cuts = {film.scene_range(sc)[0] - 1 for sc in film.scenes}
+    for act in bpy.data.actions:
+        curves = [fc for layer in act.layers for strip in layer.strips
+                  for bag in strip.channelbags for fc in bag.fcurves]
+        keys = {}
+        for fc in curves:
+            co = [0.0] * (2 * len(fc.keyframe_points))
+            fc.keyframe_points.foreach_get("co", co)
+            keys[fc] = co[0::2], co[1::2]
+        held = set(cuts)
+        for fc in curves:
+            if not fc.data_path.endswith(("location", "scale")):
+                continue
+            least = 1.0 if fc.data_path.endswith("location") else 0.3
+            f, v = keys[fc]
+            steps = [abs(b - a) for a, b in zip(v, v[1:])]
+            for i, d in enumerate(steps):
+                if d < least or f[i + 1] - f[i] > 1.01:
+                    continue
+                near = sorted(steps[max(0, i - 12):i] + steps[i + 1:i + 13])
+                if not near or d > 8 * near[len(near) // 2]:
+                    held.add(round(f[i]))
+        for fc in curves:
+            f, _ = keys[fc]
+            for h in held:
+                i = bisect.bisect_left(f, h - 0.01)
+                if i + 1 < len(f) and abs(f[i] - h) < 0.01 and f[i + 1] - f[i] <= 1.01:
+                    fc.keyframe_points[i].interpolation = "CONSTANT"
 
 
 def cameras(film, scene, poses, hill, percy):
