@@ -1,7 +1,8 @@
 """Render the 3D half of the film from the built .blend.
 
-  blender -b blender/attempt_4818_3d.blend -P blender/render.py -- --engine EEVEE
-  blender -b blender/attempt_4818_3d.blend -P blender/render.py -- --engine CYCLES --samples 256 --frames 7050-7130
+  blender -b blender/attempt_4818_3d.blend -P blender/render.py                 (Cycles, path traced)
+  blender -b blender/attempt_4818_3d.blend -P blender/render.py -- --engine EEVEE (fast)
+  blender -b blender/attempt_4818_3d.blend -P blender/render.py -- --samples 256 --frames 7160-7230
   blender -b blender/attempt_4818_3d.blend -P blender/render.py -- --stills 3520,4400,6300
 
 Frames go to build/3d/f_<frame>.png (the composite step in `python -m film.render --with-3d`
@@ -43,8 +44,8 @@ def enable_gpu():
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     ap = argparse.ArgumentParser()
-    ap.add_argument("--engine", default="EEVEE", choices=["EEVEE", "CYCLES"])
-    ap.add_argument("--samples", type=int, default=0, help="0 = default (EEVEE 96, Cycles 160)")
+    ap.add_argument("--engine", default="CYCLES", choices=["EEVEE", "CYCLES"])
+    ap.add_argument("--samples", type=int, default=0, help="0 = default (Cycles 128 adaptive, EEVEE 128)")
     ap.add_argument("--res", type=int, default=1080)
     ap.add_argument("--frames", help="range like 3481-8255 (default: all)")
     ap.add_argument("--stills", help="comma-separated frames")
@@ -59,10 +60,10 @@ def main():
     r.image_settings.file_format = "PNG"
     r.image_settings.color_depth = "8"
     if args.engine == "CYCLES":
-        scene.cycles.samples = args.samples or 160
+        scene.cycles.samples = args.samples or 128
         print("cycles device:", enable_gpu())
     else:
-        scene.eevee.taa_render_samples = args.samples or 96
+        scene.eevee.taa_render_samples = args.samples or 128
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     if args.stills:

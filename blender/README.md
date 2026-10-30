@@ -15,7 +15,10 @@ From the project root:
 blender -b -P blender/build.py
 ```
 ```bash
-blender -b blender/attempt_4818_3d.blend -P blender/render.py -- --engine EEVEE
+blender -b blender/attempt_4818_3d.blend -P blender/render.py -- --stills 3844,6156,7193
+```
+```bash
+blender -b blender/attempt_4818_3d.blend -P blender/render.py
 ```
 ```bash
 python -m film.render --with-3d build/3d
@@ -24,19 +27,19 @@ python -m film.render --with-3d build/3d
 1. The first command builds `blender/attempt_4818_3d.blend` from code in about a minute: Percy,
    the bicycle, Gus, the Model, the coast, town, hill, pier and beach, every keyframe and all
    25 cameras (switched by timeline markers). You can open the file and look around.
-2. The second renders the 4,775 frames to `build/3d/f_<frame>.png`. EEVEE takes roughly 1–3 s
-   per frame on an RTX card, so about 2–4 hours. If it's interrupted, run it again and it
-   skips frames already rendered.
-3. The third renders the whole film with the 3D frames spliced in and the soundtrack, to
+2. The second renders three test stills. Use it to time a frame on your card: the full
+   render has 4,775 frames.
+3. The third renders every frame to `build/3d/f_<frame>.png`. The default is Cycles path
+   tracing (OptiX on RTX) at 128 adaptive samples with denoising, which gives true bounce
+   light, reflections on the sea, volumetric clouds and sun shafts. Expect roughly 15–40 s per
+   frame, so a day or two. If it's interrupted, run it again and it skips frames already
+   rendered. You can split it across sessions with `--frames 3481-5000` and so on.
+4. The fourth renders the whole film with the 3D frames spliced in and the soundtrack, to
    `output/attempt_4818_3d.mp4`.
 
-Useful variations:
-
-| Command | What it does |
-| --- | --- |
-| `... render.py -- --engine EEVEE --every 6 --res 540` | quick preview: every 6th frame at 540p |
-| `... render.py -- --stills 3526,6156,7193` | a few stills to check the look |
-| `... render.py -- --engine CYCLES --samples 256 --frames 7160-7230` | path-traced hero shot (the wings opening), OptiX on RTX |
+To trade quality for speed: `--samples 64` roughly halves the time and still denoises
+cleanly; `--engine EEVEE` takes about 2–4 hours in total. `--every 6 --res 540` gives a quick
+preview of every sixth frame.
 
 Frames to know: 3526 is the page tearing open, 3844 Percy admiring his new feathers, 5873
 the harbour town, 6156 the crest of the hill, 6791 the pier at sunset, 7193 the wings

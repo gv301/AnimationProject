@@ -108,9 +108,9 @@ def build(scene, film):
                              (sets.HILL_X - 30, sets.HILL_X + 60, -2.4, -14.0, hill.z)], count=500)
     sets.bushes(env, mats, [sets.HILL_X - 30 + 6.5 * k for k in range(22)], hill.z, (-16.0, -4.0), "hillbush")
     sets.bushes(env, mats, [sets.COAST_X - 30 + 7.0 * k for k in range(18)], flat, (-16.0, -6.0), "coastbush")
-    sea, ocean = world.ocean(env, size=OCEAN_SIZE, resolution=12, loc=(0, 0, -0.25), repeat=OCEAN_REPEAT)
+    sea, ocean = world.ocean(env, size=OCEAN_SIZE, resolution=13, loc=(0, 0, -0.25), repeat=OCEAN_REPEAT)
     world.far_sea(env, sea, inner=(-OCEAN_SIZE / 2 + 2, OCEAN_SIZE * OCEAN_REPEAT - OCEAN_SIZE / 2 - 2))
-    world.haze(env, centre=(600, 0, 0), size=(1800.0, 900.0, 140.0))
+    haze_obj, haze_vol = world.haze(env, centre=(600, 0, 0), size=(1800.0, 900.0, 140.0))
     sky, _, sun = world.sky(scene, 9.0, SUN_DAY)
     world.setup_render(scene)
     world.compositor(scene, 0.55)
@@ -129,6 +129,7 @@ def build(scene, film):
     animate_spark(film, spark, poses)
     animate_props(film, poses, fish, duck, umbrella, leaves, percy)
     animate_world(film, sea, sky, sun)
+    animate_haze(film, haze_vol)
     animate_transformation(film, sweep_bike, sweep_percy, bike, percy)
     cameras(film, scene, poses, hill, percy)
 
@@ -624,6 +625,22 @@ def animate_world(film, sea, sky, sun):
             sun.keyframe_insert("rotation_euler", frame=f)
             sun.data.keyframe_insert("energy", frame=f)
             sun.data.keyframe_insert("color", frame=f)
+
+
+HAZE = {"s06_transform": 0.0003, "s07_learning": 0.00012, "s08_ride": 0.00012, "s09_hill": 0.00038,
+        "s10_flight": 0.00034, "s11_beach": 0.0004}
+
+
+def animate_haze(film, vol):
+    """Clear air by day; thicker golden air at sunset, so the low sun throws shafts past Percy."""
+    sock = vol.inputs["Density"]
+    for sc, d in HAZE.items():
+        a, b = film.scene_range(sc)
+        for f in (max(a, film.frames[0]), min(b, film.frames[-1])):
+            if f < film.frames[0] or f > film.frames[-1]:
+                continue
+            sock.default_value = d
+            sock.keyframe_insert("default_value", frame=f)
 
 
 def animate_transformation(film, sweep_bike, sweep_percy, bike, percy):

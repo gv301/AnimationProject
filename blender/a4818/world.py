@@ -35,6 +35,15 @@ def setup_render(scene, engine="BLENDER_EEVEE", res=(1920, 1080), samples=None):
         except TypeError:
             continue
     vs.exposure = -0.4
+    # a gentle filmic S-curve for depth: richer shadows, brighter highlights
+    try:
+        vs.use_curve_mapping = True
+        curve = vs.curve_mapping.curves[3]
+        for x, y in ((0.22, 0.18), (0.78, 0.84)):
+            curve.points.new(x, y)
+        vs.curve_mapping.update()
+    except (AttributeError, IndexError, TypeError):
+        pass
     ee = scene.eevee
     for name, value in (("taa_render_samples", samples or 96), ("use_raytracing", True),
                         ("use_shadows", True), ("shadow_ray_count", 2), ("shadow_step_count", 8),
@@ -58,6 +67,14 @@ def setup_render(scene, engine="BLENDER_EEVEE", res=(1920, 1080), samples=None):
     cy = scene.cycles
     cy.samples = samples or 128
     cy.use_denoising = True
+    for name, value in (("use_adaptive_sampling", True), ("adaptive_threshold", 0.015), ("denoiser", "OPENIMAGEDENOISE"),
+                        ("use_light_tree", True), ("sample_clamp_indirect", 8.0), ("volume_step_rate", 2.0),
+                        ("volume_bounces", 1), ("film_exposure", 1.0)):
+        if hasattr(cy, name):
+            try:
+                setattr(cy, name, value)
+            except (TypeError, ValueError):
+                pass
     cy.max_bounces = 8
     cy.transparent_max_bounces = 16
     cy.caustics_reflective = False

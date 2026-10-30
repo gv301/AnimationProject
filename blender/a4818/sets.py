@@ -205,6 +205,14 @@ def clouds(col):
     ln.new(ramp.outputs["Color"], dens.inputs[0])
     ln.new(dens.outputs["Value"], vol.inputs["Density"])
     ln.new(vol.outputs["Volume"], out.inputs["Volume"])
+    # a bank of cumulus piled up toward the setting sun (azimuth 120 deg from the hill)
+    for k in range(10):
+        d = 1300 + 900 * rand("suncloud", k)
+        a = 0.52 + 0.5 * (rand("suncloud", k, "a") - 0.5)
+        s = 140 + 160 * rand("suncloud", k, "s")
+        o = lib.ellipsoid(f"sunset_cloud_{k}", (s * 1.8, s * 0.9, s * 0.5), col, m, segs=12, rings=8,
+                          loc=(450 + math.cos(a) * d, math.sin(a) * d, 160 + 260 * rand("suncloud", k, "z")))
+        o.visible_shadow = False
     for k in range(14):
         x = -400 + 2000 * rand("cloud", k)
         y = 900 + 1500 * rand("cloud", k, "y")

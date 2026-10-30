@@ -55,8 +55,8 @@ def build(state="riding"):
     percy.jaw.rotation_euler = (0, math.radians(8), 0)
     ground = lib.plane("ground", (60, 60), col, M.surface("asphalt", "#5d5a57", rough=0.85,
                                                            bump=(90.0, 0.3, "noise")))
-    sea, _ = world.ocean(col, size=40, resolution=10, loc=(0, 36, -0.6), repeat=2)
-    world.far_sea(col)
+    sea, _ = world.ocean(col, size=40, resolution=10, loc=(-40, 16, -0.6), repeat=3)
+    world.far_sea(col, sea, inner=(-18.0, 98.0))
     world.sky(scene, sun_elevation=9.0, sun_rotation=215.0)
     world.haze(col)
     return scene, percy, bike
