@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Pick the best take of every dialogue line.
 
-Each line has two Breeze takes (L08.wav, L08.t2.wav). With a speech recogniser
-(sherpa-onnx + a Whisper model directory) every take is transcribed and scored by
-word error against the script; without one, the audio checks the voice kit wrote to
-dialogue/manifest.json decide. Writes dialogue/selection.json (read by the film) and
-dialogue/takes_report.md.
+Each line has two takes (L08.wav, L08.t2.wav). Every take is judged on:
+  * content: with a speech recogniser (sherpa-onnx + a Whisper model directory) it is
+    transcribed and scored by word error against the script;
+  * sound quality: with DNSMOS (sig_bak_ovr.onnx, a speech-quality model trained on
+    listener ratings) it gets signal / background / overall scores out of 5, which
+    drop for codec-like, muffled or distorted audio;
+  * the voice kit's audio checks in dialogue/manifest.json.
+Writes dialogue/selection.json (read by the film) and dialogue/takes_report.md.
 
-  python tools/pick_takes.py --asr-model path/to/sherpa-onnx-whisper-base.en
+  python tools/pick_takes.py --asr-model DIR --quality-model sig_bak_ovr.onnx --prefer GUS=1
   python tools/pick_takes.py                    (audio checks only)
 """
 
@@ -101,6 +104,42 @@ class Recogniser:
         return stream.result.text.strip()
 
 
+class Quality:
+    """DNSMOS P.835: signal, background and overall quality (1-5) of a speech clip."""
+
+    P_SIG = (-0.08397278, 1.22083953, 0.0052439)
+    P_BAK = (-0.13166888, 1.60915514, -0.39604546)
+    P_OVR = (-0.06766283, 1.11546468, 0.04602535)
+
+    def __init__(self, model: Path):
+        import onnxruntime
+        self.session = onnxruntime.InferenceSession(str(model), providers=["CPUExecutionProvider"])
+
+    def __call__(self, path: Path) -> dict:
+        import numpy as np
+        import soundfile as sf
+        from scipy import signal
+        audio, rate = sf.read(str(path), dtype="float32", always_2d=False)
+        if audio.ndim > 1:
+            audio = audio.mean(axis=1)
+        g = __import__("math").gcd(16000, rate)
+        x = signal.resample_poly(audio, 16000 // g, rate // g).astype("float32")
+        need = 144160
+        while len(x) < need:
+            x = np.concatenate([x, x])
+        sig, bak, ovr = self.session.run(None, {"input_1": x[None, :need]})[0][0]
+        poly = lambda c, v: float(np.polyval(c, v))
+        return {"sig": round(poly(self.P_SIG, sig), 2), "bak": round(poly(self.P_BAK, bak), 2),
+                "ovr": round(poly(self.P_OVR, ovr), 2)}
+
+
+def quality_cost(q) -> float:
+    """0 for a clean take; grows as listeners would rate it worse."""
+    if not q:
+        return 0.0
+    return 0.9 * max(0.0, 3.3 - q["ovr"]) + 0.6 * max(0.0, 3.4 - q["sig"])
+
+
 PENALTY = {"clipping": 0.15, "silence": 0.35, "shorter": 0.3, "longer": 0.4, "silent": 1.0}
 
 
@@ -116,10 +155,15 @@ def penalty(warnings, heard_perfectly=False) -> float:
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--asr-model", type=Path, help="sherpa-onnx Whisper model directory")
+    parser.add_argument("--quality-model", type=Path, help="DNSMOS sig_bak_ovr.onnx")
+    parser.add_argument("--prefer", nargs="*", default=[], metavar="VOICE=TAKE",
+                        help="lean toward a take for a voice, e.g. GUS=1")
     args = parser.parse_args()
     sheet = json.loads(SHEET.read_text(encoding="utf-8"))
     manifest = json.loads((DIALOGUE / "manifest.json").read_text(encoding="utf-8"))
     asr = Recogniser(args.asr_model) if args.asr_model else None
+    quality = Quality(args.quality_model) if args.quality_model else None
+    prefer = {k.upper(): int(v) for k, v in (p.split("=") for p in args.prefer)}
     selection, rows = {}, []
     for line in sheet["lines"]:
         lid = line["id"]
@@ -132,28 +176,41 @@ def main():
             info = manifest["takes"].get(name, {})
             heard = asr(path) if asr else ""
             error = wer(ref, words(heard)) if asr else 0.0
-            score = error + penalty(info.get("warnings", []), asr is not None and error == 0) \
-                + (0.01 if name.endswith(".t2.wav") else 0.0)
-            candidates.append((score, name, error, heard, info))
+            q = quality(path) if quality else {}
+            take = 2 if name.endswith(".t2.wav") else 1
+            score = 2.0 * error + quality_cost(q) \
+                + penalty(info.get("warnings", []), asr is not None and error == 0) \
+                + (0.25 if line["who"] in prefer and prefer[line["who"]] != take else 0.0) \
+                + (0.01 if take == 2 else 0.0)
+            candidates.append((score, name, error, heard, dict(info, quality=q)))
         if not candidates:
             continue
         best = min(candidates)
         selection[lid] = best[1]
         rows.append((lid, line["who"], line["text"], candidates, best[1]))
         print(f"{lid} {line['who']:<5} -> {best[1]:<11} " +
-              "  ".join(f"{c[1]}: wer {c[2]:.2f}{' ' + str(c[4].get('warnings')) if c[4].get('warnings') else ''}"
+              "  ".join(f"{c[1]}: wer {c[2]:.2f} q {c[4]['quality'].get('ovr', '-')}"
+                        f"{' ' + str(c[4].get('warnings')) if c[4].get('warnings') else ''}"
                         for c in candidates), flush=True)
     (DIALOGUE / "selection.json").write_text(json.dumps(selection, indent=1), encoding="utf-8")
-    report = ["# Take selection", "",
-              "Chosen by word error against the script (Whisper base.en via sherpa-onnx) plus the voice "
-              "kit's audio checks." if asr else "Chosen by the voice kit's audio checks.", ""]
+    how = []
+    if asr:
+        how.append("word error against the script (Whisper base.en via sherpa-onnx)")
+    if quality:
+        how.append("speech quality (DNSMOS P.835: signal / background / overall, out of 5)")
+    how.append("the voice kit's audio checks")
+    report = ["# Take selection", "", "Chosen by " + ", ".join(how) + "." +
+              (f" Leaning toward: {', '.join(f'{k} take {v}' for k, v in prefer.items())}." if prefer else ""), ""]
     for lid, who, text, candidates, chosen in rows:
         report.append(f"**{lid} {who}**: {text}  ")
         for score, name, error, heard, info in sorted(candidates, key=lambda c: c[1]):
             mark = "✓" if name == chosen else " "
             warn = f" ({'; '.join(info.get('warnings', []))})" if info.get("warnings") else ""
             heard_text = f" heard: \"{heard}\"" if asr else ""
-            report.append(f"- {mark} `{name}` {info.get('seconds', 0):.1f} s, word error {error:.2f}{warn}.{heard_text}  ")
+            q = info.get("quality") or {}
+            q_text = f", quality sig {q['sig']:.2f} bak {q['bak']:.2f} ovr {q['ovr']:.2f}" if q else ""
+            report.append(f"- {mark} `{name}` {info.get('seconds', 0):.1f} s, word error {error:.2f}{q_text}"
+                          f"{warn}.{heard_text}  ")
         report.append("")
     (DIALOGUE / "takes_report.md").write_text("\n".join(report), encoding="utf-8")
     print(f"wrote {DIALOGUE / 'selection.json'} and takes_report.md")
