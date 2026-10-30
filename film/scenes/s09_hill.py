@@ -308,13 +308,14 @@ def _gus(canvas, ctx, course, pal, px, gy):
     c = ctx.cues
     if t < c["pier"] - 0.8:
         return
-    arrive = smoothstep(c["pier"] - 0.8, c["pier"] + 0.4, t)
-    pos = (px + lerp(-900, 380, arrive), gy - 420 + 26 * math.sin(t * 5))
+    # he flies alongside, well ahead of and above Percy, yelling back over his shoulder
+    arrive = smoothstep(c["pier"] - 0.8, c["pier"] + 0.5, t)
+    pos = (px + lerp(-900, 620, arrive), gy - 690 + 22 * math.sin(t * 5))
     mouth = ctx.mouth("GUS")
     pose = GullPose(face=-1.0, flying=1.0, flap=math.sin(t * 10), jaw=clamp(mouth * 1.2),
                     lid=0.0, look=(1.0, 0.4), lean=-0.1)
     with gfx.saved(canvas, *pos):
-        GUS.draw(canvas, pose, GullLook(ambient=wd.ambient_tuple(pal), rim=(pal["rim"], 0, 0.6)), scale=0.95)
+        GUS.draw(canvas, pose, GullLook(ambient=wd.ambient_tuple(pal), rim=(pal["rim"], 0, 0.6)), scale=0.82)
 
 
 def _speed_lines(canvas, ctx, v):

@@ -1,4 +1,14 @@
-"""The final mix: dialogue, sound design and score, plus the subtitle track."""
+"""The final mix: dialogue, sound design and score, plus the subtitle track.
+
+Loudness is managed in three places so nothing jumps out or disappears:
+  * every line is levelled to the same loudness (BS.1770, K-weighted), keeping only part of
+    how much louder or softer it was performed than that character's other lines, and never
+    more than 1.5 dB above or 4 dB below the dialogue level: a shout still sounds like a shout
+    but no longer blasts, and a whisper stays audible;
+  * the dialogue bus is de-essed and gently compressed, and the score dips under it;
+  * a slow leveller pulls down any stretch whose short-term loudness runs well above the
+    dialogue level, then the whole film is set to -16 LUFS with peaks held under -1 dBTP.
+"""
 
 from __future__ import annotations
 
@@ -9,13 +19,54 @@ import numpy as np
 import soundfile as sf
 from scipy import signal
 
-from . import design, music
+from . import design, eleven, music, score
 from . import synth as S
 from .synth import SR
 
-TARGET_VOICE_RMS = 0.085
+LINE_LUFS = -23.0          # every line after levelling
+KEEP = 0.35                # share of a line's own loudness difference that survives levelling
+CAP_UP, CAP_DOWN = 1.5, -4.0
+FILM_LUFS = -16.0
+TRUE_PEAK = -1.0           # dBTP
+LEVELLER_ALLOW = 4.0       # LU above the dialogue level before the leveller steps in
 SLOWMO_LINES = {"L48", "L49", "L50"}
 MUFFLED_LINES = {"L29": 1100}
+
+# K-weighting at 48 kHz (ITU-R BS.1770-4)
+_K = [([1.53512485958697, -2.69169618940638, 1.19839281085285], [1.0, -1.69065929318241, 0.73248077421585]),
+      ([1.0, -2.0, 1.0], [1.0, -1.99004745483398, 0.99007225036621])]
+
+
+def k_weight(x):
+    for b, a in _K:
+        x = signal.lfilter(b, a, x, axis=0)
+    return x
+
+
+def loudness(x):
+    """Integrated loudness (LUFS) of a mono or stereo clip; short clips fall back to an ungated measure."""
+    import pyloudnorm
+    st = x if x.ndim == 2 else x[:, None]
+    try:
+        value = pyloudnorm.Meter(SR).integrated_loudness(st.astype(np.float64))
+        if np.isfinite(value):
+            return float(value)
+    except ValueError:
+        pass
+    ms = np.mean(k_weight(st) ** 2, axis=0).sum()
+    return float(-0.691 + 10 * math.log10(ms + 1e-12))
+
+
+def short_term(x, window=3.0, hop=0.1):
+    """Short-term loudness curve (LUFS) of a stereo signal, one value per `hop`."""
+    kw = k_weight(x.astype(np.float64))
+    power = (kw ** 2).sum(axis=1)
+    h, w = int(hop * SR), int(window * SR)
+    csum = np.concatenate([[0.0], np.cumsum(power)])
+    starts = np.arange(0, max(1, len(power) - w), h)
+    ms = (csum[np.minimum(starts + w, len(power))] - csum[starts]) / w
+    times = (starts + w / 2) / SR
+    return times, -0.691 + 10 * np.log10(ms + 1e-12)
 
 
 def _take_audio(take):
@@ -33,44 +84,72 @@ def _take_audio(take):
     return S.fade(x, 0.01, 0.06)
 
 
-def _voiced_rms(x):
-    frames = x[: len(x) // 480 * 480].reshape(-1, 480)
-    rms = np.sqrt(np.mean(frames ** 2, axis=1))
-    voiced = rms[rms > np.max(rms) * 0.1] if len(rms) else rms
-    return float(np.sqrt(np.mean(voiced ** 2))) if len(voiced) else 1e-4
+def line_gains(film, clips):
+    """dB gain per line: level everything, keep a little of each performance's dynamics."""
+    measured = {lid: loudness(x) for lid, x in clips.items()}
+    by_who = {}
+    for ev in film.timeline.lines:
+        if ev.line in measured:
+            by_who.setdefault(ev.who, []).append(measured[ev.line])
+    median = {who: float(np.median(v)) for who, v in by_who.items()}
+    gains = {}
+    for ev in film.timeline.lines:
+        if ev.line not in measured:
+            continue
+        rel = float(np.clip(KEEP * (measured[ev.line] - median[ev.who]), CAP_DOWN, CAP_UP))
+        gains[ev.line] = LINE_LUFS + rel - measured[ev.line]
+    return gains, measured
+
+
+def de_ess(x, split=5500, threshold=0.45, depth_db=8.0):
+    """Turn the top band down while it dominates (sibilance), for a stereo bus."""
+    hi = np.stack([S.highpass(x[:, c], split, order=4) for c in range(2)], axis=1)
+    lo = x - hi
+    eh = S.envelope_follow(np.abs(hi).mean(axis=1), attack=0.001, release=0.04)
+    ef = S.envelope_follow(np.abs(x).mean(axis=1), attack=0.001, release=0.04)
+    excess = np.clip(eh / (ef + 1e-6) - threshold, 0, None) / (1 - threshold)
+    g = 10 ** (-depth_db * np.clip(excess * 2, 0, 1) / 20)
+    return (lo + hi * g[:, None]).astype(np.float32)
+
+
+def compress(x, threshold_db=-21.0, ratio=2.5, attack=0.005, release=0.12):
+    """Gentle RMS compressor, stereo-linked."""
+    level = np.sqrt(np.maximum(S.envelope_follow((x ** 2).mean(axis=1), attack, release), 1e-12))
+    db = 20 * np.log10(level + 1e-9)
+    over = np.clip(db - threshold_db, 0, None)
+    g = 10 ** (-(over - over / ratio) / 20)
+    return (x * g[:, None]).astype(np.float32)
 
 
 def dialogue_bus(film, n):
     dry = np.zeros((n, 2), dtype=np.float32)
     send = np.zeros((n, 2), dtype=np.float32)
-    clips, levels = {}, {}
+    clips = {}
     for ev in film.timeline.lines:
         take = film.takes[ev.line]
-        if take.path is None:
-            continue
-        x = _take_audio(take)
-        clips[ev.line] = x
-        levels.setdefault(ev.who, []).append(_voiced_rms(x))
-    gains = {who: TARGET_VOICE_RMS / float(np.median(v)) for who, v in levels.items()}
+        if take.path is not None:
+            clips[ev.line] = _take_audio(take)
+    gains, _ = line_gains(film, clips)
     for ev in film.timeline.lines:
         x = clips.get(ev.line)
         if x is None:
             continue
-        x = x * gains[ev.who]
+        x = x * 10 ** (gains[ev.line] / 20)
         if ev.line in MUFFLED_LINES:
-            x = S.lowpass(x, MUFFLED_LINES[ev.line], order=4) * 1.4
+            x = S.lowpass(x, MUFFLED_LINES[ev.line], order=4) * 1.6
         if ev.who == "MODEL":
             # a faint airy halo on the Model's voice
-            air = S.highpass(x, 4000) * 0.25
+            air = S.highpass(x, 4000) * 0.22
             x = x + np.concatenate([np.zeros(int(0.012 * SR), dtype=np.float32), air])[: len(x)]
         st = S.pan(x, design.dialogue_pan(ev.scene, ev.who))
-        amount = 0.12 if ev.who != "MODEL" else 0.26
+        amount = 0.12 if ev.who != "MODEL" else 0.24
         if ev.line in SLOWMO_LINES:
             amount = 0.5
         i = max(0, int((ev.start - 0.03) * SR))
         j = min(n, i + len(st))
         dry[i:j] += st[: j - i]
         send[i:j] += st[: j - i] * amount
+    dry = compress(de_ess(dry))
     return dry, send
 
 
@@ -79,7 +158,12 @@ def sfx_bus(film, n):
     send = np.zeros((n, 2), dtype=np.float32)
     for e in design.scene_events(film):
         a = e.audio.astype(np.float32)
-        st = S.pan(a, e.pan) if a.ndim == 1 else a
+        if a.ndim == 1:
+            st = S.pan(a, e.pan)
+        else:
+            # stereo recordings: balance rather than pan
+            p = float(np.clip(e.pan, -1, 1))
+            st = a * np.array([min(1.0, 1 - p), min(1.0, 1 + p)], dtype=np.float32)
         st = st * e.gain
         i = int(e.t * SR)
         if i >= n or i + len(st) <= 0:
@@ -92,10 +176,84 @@ def sfx_bus(film, n):
     return dry, send
 
 
-def duck_curve(voice, depth_db=-9.0):
-    env = S.envelope_follow(voice.mean(axis=1), attack=0.04, release=0.45)
-    amount = np.clip(env / 0.03, 0, 1)
-    return (10 ** (depth_db * amount / 20)).astype(np.float32)
+def music_bus(film, n, dia):
+    if eleven.available():
+        mus, depth = score.render(film, n)
+        env = S.envelope_follow(dia.mean(axis=1), attack=0.06, release=0.7)
+        amount = np.clip(env / 0.04, 0, 1)
+        return mus * (10 ** (-depth * amount / 20))[:, None].astype(np.float32)
+    mus = music.compose(film).render(n / SR)[:n]
+    if len(mus) < n:
+        mus = np.pad(mus, ((0, n - len(mus)), (0, 0)))
+    mus *= 0.04 / (np.sqrt(np.mean(mus ** 2)) + 1e-9)
+    return mus * score.duck_gain(dia, 9.0)[:, None]
+
+
+def speech_mask(film, n, hop=0.1):
+    """Which short-term windows are centred inside a line."""
+    m = np.zeros(int(n / SR / hop) + 1, dtype=bool)
+    for ev in film.timeline.lines:
+        m[int(ev.start / hop):int(ev.end / hop) + 1] = True
+    return m
+
+
+def level(master, film):
+    """Pull down any stretch that runs well above the dialogue level (slowly, like a hand on a fader)."""
+    times, st = short_term(master)
+    mask = speech_mask(film, len(master))
+    idx = np.clip((times / 0.1).astype(int), 0, len(mask) - 1)
+    ref = float(np.median(st[mask[idx] & (st > -60)]))
+    over = np.clip(st - (ref + LEVELLER_ALLOW), 0, None)
+    gain_db = -0.8 * over
+    # smooth: fall fast enough to catch a swell, recover slowly
+    sm = np.copy(gain_db)
+    for i in range(1, len(sm)):
+        k = 0.35 if sm[i] < sm[i - 1] else 0.06
+        sm[i] = sm[i - 1] + k * (gain_db[i] - sm[i - 1])
+    g = 10 ** (np.interp(np.arange(len(master)) / SR, times, sm) / 20)
+    return (master * g[:, None]).astype(np.float32), ref
+
+
+def true_peak_limit(x, ceiling_db=TRUE_PEAK, oversample=4, block=10.0):
+    """Peak limiter driven by 4x-oversampled (true) peaks."""
+    peak = np.zeros(len(x), dtype=np.float32)
+    step = int(block * SR)
+    for a in range(0, len(x), step):
+        chunk = x[a:a + step]
+        up = signal.resample_poly(chunk, oversample, 1, axis=0)
+        peak[a:a + len(chunk)] = np.abs(up).reshape(len(chunk), oversample, 2).max(axis=(1, 2))
+    ceiling = 10 ** (ceiling_db / 20)
+    gain = np.minimum(1.0, ceiling / (peak + 1e-9))
+    stereo = np.stack([x[:, 0], x[:, 1]], axis=1)
+    w = int(0.004 * SR)
+    from scipy.ndimage import minimum_filter1d
+    g = minimum_filter1d(gain, size=2 * w + 1)
+    gd = g[::32].copy()
+    k = math.exp(-32 / (0.08 * SR))
+    for i in range(1, len(gd)):
+        gd[i] = min(gd[i], k * gd[i - 1] + (1 - k))
+    full = np.minimum(np.repeat(gd, 32)[: len(x)], g)
+    return (stereo * full[:, None]).astype(np.float32)
+
+
+def report(master, film, ref):
+    times, st = short_term(master)
+    mask = speech_mask(film, len(master))
+    idx = np.clip((times / 0.1).astype(int), 0, len(mask) - 1)
+    speech = st[mask[idx] & (st > -60)]
+    loud = [(t, v) for t, v in zip(times, st) if v > np.median(speech) + 6]
+    print(f"  loudness: {loudness(master):.1f} LUFS integrated, dialogue short-term median "
+          f"{np.median(speech):.1f} (10-90%: {np.percentile(speech, 10):.1f}..{np.percentile(speech, 90):.1f}), "
+          f"max short-term {st.max():.1f} at {times[np.argmax(st)]:.1f} s", flush=True)
+    if loud:
+        spans, start, prev = [], loud[0][0], loud[0][0]
+        for t, _ in loud[1:]:
+            if t - prev > 0.5:
+                spans.append((start, prev))
+                start = t
+            prev = t
+        spans.append((start, prev))
+        print("  more than 6 LU above dialogue: " + ", ".join(f"{a:.1f}-{b:.1f}" for a, b in spans), flush=True)
 
 
 def render(film, out_path: Path, t0=0.0, t1=None):
@@ -106,28 +264,20 @@ def render(film, out_path: Path, t0=0.0, t1=None):
     dia, dia_send = dialogue_bus(film, n)
     print("  designing sound...", flush=True)
     fx, fx_send = sfx_bus(film, n)
-    print("  performing the score...", flush=True)
-    mus = music.compose(film).render(total + 3.0)[:n]
-    if len(mus) < n:
-        mus = np.pad(mus, ((0, n - len(mus)), (0, 0)))
-    loud = np.sqrt(np.mean(mus ** 2)) + 1e-9
-    mus *= 0.04 / loud
-    mus *= duck_curve(dia)[:, None]
+    print("  laying in the score...", flush=True)
+    mus = music_bus(film, n, dia)
     print("  adding space...", flush=True)
     wet = S.convolve_stereo(dia_send + fx_send, S.reverb_ir(1.8, 0.5, seed=5))[:n]
     master = dia + fx * 0.8 + mus + wet * 0.3
-    # loudness: put the louder-but-normal passages (dialogue over music) at about -16 dBFS RMS,
-    # and let the limiter catch the rare peaks above -1 dBFS
-    win = int(0.4 * SR)
-    blocks = master[: len(master) // win * win].reshape(-1, win, 2)
-    rms = np.sqrt(np.mean(blocks ** 2, axis=(1, 2)))
-    ref = float(np.percentile(rms[rms > 1e-4], 90))
-    master *= 0.16 / ref
-    master = S.limiter(master, ceiling=0.89)
+    master, ref = level(master, film)
+    master *= 10 ** ((FILM_LUFS - loudness(master[: int(total * SR)])) / 20)
+    master = true_peak_limit(master)
     a, b = int(t0 * SR), int(t1 * SR)
     out = master[a:b]
     out_path.parent.mkdir(parents=True, exist_ok=True)
     sf.write(str(out_path), out, SR, subtype="PCM_24")
+    if (t0, t1) == (0.0, total):
+        report(out, film, ref)
     peak = float(np.max(np.abs(out))) if len(out) else 0.0
     print(f"  mix: {len(out) / SR:.1f} s, peak {20 * math.log10(peak + 1e-9):.1f} dBFS -> {out_path}", flush=True)
 

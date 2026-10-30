@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from . import sfx
+from . import eleven, sfx
 from . import synth as S
 from .synth import SR
 from .. import bicycle as bk
@@ -22,6 +22,34 @@ class E:
     gain: float = 1.0
     pan: float = 0.0
     send: float = 0.15
+
+
+class Kit:
+    """ElevenLabs recordings where they beat the synthesized version; the synth otherwise."""
+
+    def __init__(self):
+        self.on = eleven.available()
+        self._hits = {}
+        self._rng = S.rng("kit")
+
+    def one(self, name, fallback, level=-14.0, take=None):
+        return eleven.effect(name, take, level) if self.on else fallback()
+
+    def hit(self, name, fallback, level=-14.0, **kw):
+        """A random single hit (wing beat, key click, squeak) cut from the recordings."""
+        if not self.on:
+            return fallback()
+        if name not in self._hits:
+            self._hits[name] = eleven.hits(name, level_db=level, **kw)
+        pool = self._hits[name]
+        return pool[int(self._rng.integers(0, len(pool)))]
+
+    def bed(self, name, seconds, fallback, level=-20.0, curve=None):
+        x = eleven.bed(name, seconds, level_db=level) if self.on else fallback()
+        if curve is not None:
+            c = np.interp(np.arange(len(x)), np.arange(len(curve)), curve)
+            x = x * (c[:, None] if x.ndim == 2 else c)
+        return x.astype(np.float32)
 
 
 def _ctx(film, name):
@@ -67,16 +95,22 @@ def ambience(film):
     start = scenes["s06_transform"].start + scenes["s06_transform"].cues["peel"] + 1.0
     end = scenes["s11_beach"].start + scenes["s11_beach"].cues["lineart"] + 1.2
     dur = end - start
-    bed = sfx.waves(dur, seed=1, level=1.0)
-    bed *= np.minimum(1, np.arange(len(bed)) / (2.0 * SR))
-    bed[-int(1.2 * SR):] *= np.linspace(1, 0, int(1.2 * SR))
-    events.append(E(start, S.pan(bed, -0.3) + S.pan(sfx.waves(dur, seed=2), 0.3), 0.55, 0.0, 0.0))
+    kit = KIT
+    if kit.on:
+        bed = kit.bed("sea", dur, None, level=-22.0)
+    else:
+        bed = S.pan(sfx.waves(dur, seed=1, level=1.0), -0.3) + S.pan(sfx.waves(dur, seed=2), 0.3)
+    ramp = np.minimum(1, np.arange(len(bed)) / (2.0 * SR))
+    ramp[-int(1.2 * SR):] *= np.linspace(1, 0, int(1.2 * SR))
+    events.append(E(start, bed * ramp[:, None], 0.55, 0.0, 0.0))
     rng = S.rng("gulls")
     t = start + 2.0
     while t < end - 2:
-        events.append(E(t, sfx.gull_call(int(rng.integers(0, 4))), 0.35, float(rng.uniform(-0.8, 0.8)), 0.4))
+        call = lambda: kit.hit("gulls", lambda: sfx.gull_call(int(rng.integers(0, 4))), level=-16.0,
+                               min_gap=0.25, length=0.7, takes=(1, 2))
+        events.append(E(t, call(), 0.3, float(rng.uniform(-0.8, 0.8)), 0.4))
         if rng.random() < 0.5:
-            events.append(E(t + 0.35, sfx.gull_call(int(rng.integers(0, 4))), 0.25, float(rng.uniform(-0.8, 0.8)), 0.4))
+            events.append(E(t + 0.35, call(), 0.2, float(rng.uniform(-0.8, 0.8)), 0.4))
         t += rng.uniform(4.0, 9.0)
     for name in ("s02_attempt1", "s05_talk"):
         st = scenes[name]
@@ -86,7 +120,11 @@ def ambience(film):
     return events
 
 
+KIT = Kit()
+
+
 def scene_events(film):
+    kit = KIT
     ev = []
     ev += ambience(film)
 
@@ -94,7 +132,8 @@ def scene_events(film):
     st, ctx = _ctx(film, "s01_prompt")
     from ..scenes import s01_prompt as s1
     for i, k in enumerate(s1.typing_times(st.cues["type"])):
-        ev.append(E(st.start + k, sfx.key_click(i), 0.55, -0.1 + 0.02 * (i % 5), 0.05))
+        ev.append(E(st.start + k, kit.hit("key_click", lambda: sfx.key_click(i), level=-16.0, length=0.12, min_gap=0.06),
+                    0.5, -0.1 + 0.02 * (i % 5), 0.05))
     ev.append(E(st.start + st.cues["send"], sfx.enter_key(), 0.7, 0.0, 0.05))
     ev.append(E(st.start + st.cues["send"] + 0.05, sfx.whoosh(0.5, 400, 4000, seed=1, peak=0.4), 0.35, 0.1, 0.2))
     ev.append(E(st.start + st.cues["send"] + 0.4, sfx.shimmer(1.0, seed=1, count=10), 0.25, -0.4, 0.4))
@@ -111,16 +150,16 @@ def scene_events(film):
         t = st.start + st.cues["build"] + i * s2.POP
         ev.append(E(t, sfx.pop(S.midi_hz(notes[i])), 0.32, (s2.ANCHORS[name][0] - 960) / 1400, 0.2))
     roll = st.cues["roll"]
-    ev.append(E(st.start + roll + 0.2, sfx.slide_whistle(1400, 300, 2.6), 0.38, 0.6, 0.3))
-    ev.append(E(st.start + st.cues["clatter"], sfx.clatter(), 0.6, 0.95, 0.5))
-    ev.append(E(st.start + st.cues["erase"], sfx.eraser(0.7), 0.6, 0.0, 0.2))
+    ev.append(E(st.start + roll + 0.2, kit.one("slide_whistle", lambda: sfx.slide_whistle(1400, 300, 2.6), -19.0), 0.6, 0.6, 0.3))
+    ev.append(E(st.start + st.cues["clatter"], kit.one("wheel_clatter", sfx.clatter, -16.0), 0.75, 0.8, 0.5))
+    ev.append(E(st.start + st.cues["erase"], kit.one("eraser", lambda: sfx.eraser(0.7), -18.0), 0.7, 0.0, 0.2))
     ev.append(E(st.start + st.cues["erase"], sfx.whoosh(0.7, 300, 3000, seed=3), 0.4, 0.0, 0.2))
 
     # 3. Attempt 2: the scanline render, the head-turn squeak, a happy boing
     st, ctx = _ctx(film, "s03_attempt2")
     ev.append(E(st.start + st.cues["draw"], sfx.scan(1.5), 0.5, 0.0, 0.2))
     ev.append(E(st.start + st.cues["turn"] + 0.1, sfx.squeak(2), 0.25, -0.05, 0.1))
-    ev.append(E(st.start + st.cues["L08"] + 0.05, sfx.boing(260), 0.4, 0.4, 0.2))
+    ev.append(E(st.start + st.cues["L08"] + 0.05, kit.one("boing", lambda: sfx.boing(260), -18.0), 0.6, 0.4, 0.2))
 
     # 4. Montage: a pop per gag, its own stinger, and the counter spinning
     st, ctx = _ctx(film, "s04_montage")
@@ -140,8 +179,9 @@ def scene_events(film):
 
     # 5. Attempt 4,817: a flap of exasperation, kicking feet, a rising hum for "hold on"
     st, ctx = _ctx(film, "s05_talk")
-    ev.append(E(st.start + st.cues["L14"] - 0.1, sfx.flap(1, 1.4), 0.7, 0.0, 0.2))
-    ev.append(E(st.start + st.cues["L14.end"] + 0.2, sfx.flap(2, 1.2), 0.5, 0.0, 0.2))
+    flap = lambda seed, dur: kit.hit("wings", lambda: sfx.flap(seed, dur), level=-15.0, min_gap=0.2, length=0.55)
+    ev.append(E(st.start + st.cues["L14"] - 0.1, flap(1, 1.4), 0.6, 0.0, 0.2))
+    ev.append(E(st.start + st.cues["L14.end"] + 0.2, flap(2, 1.2), 0.45, 0.0, 0.2))
     for k in range(5):
         ev.append(E(st.start + st.cues["L15"] + 0.2 + k * 0.35, sfx.whoosh(0.18, 300, 1200, seed=10 + k, peak=0.5),
                     0.18, -0.1, 0.1))
@@ -151,9 +191,9 @@ def scene_events(film):
     st, ctx = _ctx(film, "s06_transform")
     c = st.cues
     ev.append(E(st.start + c["glow"], sfx.shimmer(1.2, seed=2, count=30), 0.35, 0.0, 0.5))
-    ev.append(E(st.start + c["peel"], sfx.tear(c["world"] - c["peel"]), 0.7, 0.0, 0.3))
+    ev.append(E(st.start + c["peel"], kit.one("paper_tear", lambda: sfx.tear(c["world"] - c["peel"]), -16.0), 0.75, 0.0, 0.3))
     ev.append(E(st.start + c["peel"], sfx.whoosh(c["world"] - c["peel"] + 0.4, 100, 5000, seed=4, peak=0.8), 0.6, 0.0, 0.4))
-    ev.append(E(st.start + c["world"], sfx.thud(45, 1.2), 0.5, 0.0, 0.5))
+    ev.append(E(st.start + c["world"], kit.one("reveal_boom", lambda: sfx.thud(45, 1.2), -14.0), 0.7, 0.0, 0.5))
     c0 = c["bike"]
     for i in range(18):
         appear = c0 + 0.8 + 1.8 * ((i * 7) % 18) / 18
@@ -161,11 +201,13 @@ def scene_events(film):
         ev.append(E(st.start + appear, sfx.spoke_ping(f), 0.35, -0.3 + 0.6 * (i % 2), 0.4))
     for k in range(30):
         ev.append(E(st.start + c0 + 2.0 + k / 30, sfx.tick(2600 + 200 * (k % 3)), 0.3, -0.1, 0.1))
-    ev.append(E(st.start + c0 + 3.4, sfx.bike_bell(), 0.6, 0.1, 0.3))
-    ev.append(E(st.start + c["percy"], sfx.shimmer(1.0, seed=5, count=26, lo=3000, hi=8000), 0.4, 0.0, 0.5))
-    ev.append(E(st.start + c["percy"] + 0.95, sfx.flap(5, 0.8), 0.6, -0.05, 0.1))
-    ev.append(E(st.start + c["percy"] + 1.05, sfx.flap(6, 0.6), 0.5, -0.05, 0.1))
-    ev.append(E(st.start + c["L23"] + 0.3, sfx.bike_bell(), 0.45, 0.1, 0.3))
+    bell = lambda: kit.one("bell", sfx.bike_bell, -16.0)
+    ev.append(E(st.start + c0 + 3.4, bell(), 0.6, 0.1, 0.3))
+    ev.append(E(st.start + c["percy"] - 0.1, kit.one("magic_swell", lambda: sfx.shimmer(1.0, seed=5, count=26, lo=3000, hi=8000), -17.0),
+                0.6, 0.0, 0.5))
+    ev.append(E(st.start + c["percy"] + 0.95, flap(5, 0.8), 0.6, -0.05, 0.1))
+    ev.append(E(st.start + c["percy"] + 1.15, flap(6, 0.6), 0.45, -0.05, 0.1))
+    ev.append(E(st.start + c["L23"] + 0.3, bell(), 0.45, 0.1, 0.3))
 
     # 7. Learning: chain and tyres from the motion, the crash, a wheel freewheeling in the hedge
     st, ctx = _ctx(film, "s07_learning")
@@ -176,9 +218,9 @@ def scene_events(film):
     seg = c["crash"]
     ev.append(E(st.start, sfx.chain_whir(seg, _curve(ts, cad, 0, seg)), 0.5, -0.1, 0.05))
     ev.append(E(st.start, sfx.roll_noise(seg, _curve(ts, v / 900, 0, seg)), 0.5, -0.1, 0.05))
-    ev.append(E(st.start + c["crash"] - 0.05, sfx.rustle(1.4, 1, 1.5), 0.9, 0.35, 0.2))
-    ev.append(E(st.start + c["crash"], sfx.thud(80, 0.4), 0.45, 0.35, 0.2))
-    ev.append(E(st.start + c["crash"] + 0.08, sfx.bike_bell(), 0.25, 0.35, 0.3))
+    ev.append(E(st.start + c["crash"] - 0.3, kit.one("hedge_crash", lambda: sfx.rustle(1.4, 1, 1.5), -13.0), 0.85, 0.35, 0.2))
+    ev.append(E(st.start + c["crash"], sfx.thud(80, 0.4), 0.35, 0.35, 0.2))
+    ev.append(E(st.start + c["crash"] + 0.08, bell(), 0.2, 0.35, 0.3))
     k = np.arange(0, 6.0, 1 / 240)
     spin = 8 * (1 - np.exp(-k * 0.8)) / 0.8
     clicks = [k[i] for i in range(1, len(k)) if math.floor(spin[i] / (2 * math.pi / 24)) > math.floor(spin[i - 1] / (2 * math.pi / 24))]
@@ -200,14 +242,15 @@ def scene_events(film):
     seg = st.duration
     ev.append(E(st.start, sfx.chain_whir(seg, _curve(ts, cad, 0, seg)), 0.32, -0.1, 0.05))
     ev.append(E(st.start, sfx.roll_noise(seg, _curve(ts, v / 900, 0, seg)), 0.3, -0.1, 0.05))
-    ev.append(E(st.start, sfx.wind(seg, _curve(ts, v / 2600, 0, seg), seed=8), 0.12, 0.0, 0.0))
-    for at in (0.6, 0.85):
-        ev.append(E(st.start + c["bell"] + at, sfx.bike_bell(), 0.5, -0.1, 0.25))
-    ev.append(E(st.start + c["fish"], sfx.splash(), 0.6, 0.6, 0.3))
-    ev.append(E(st.start + c["fish"] + 0.1, sfx.whoosh(1.0, 400, 2500, seed=12, peak=0.5), 0.35, 0.3, 0.2))
-    ev.append(E(st.start + c["catch"], sfx.gulp(), 0.5, -0.1, 0.1))
+    speed = _curve(ts, v / 2600, 0, seg)
+    ev.append(E(st.start, kit.bed("wind", seg, lambda: S.pan(sfx.wind(seg, speed, seed=8), 0.0), level=-24.0,
+                                  curve=np.clip(speed * 1.6, 0, 1)), 0.5, 0.0, 0.0))
+    ev.append(E(st.start + c["bell"] + 0.6, bell(), 0.55, -0.1, 0.25))
+    ev.append(E(st.start + c["fish"], kit.one("fish_splash", sfx.splash, -15.0), 0.65, 0.6, 0.3))
+    ev.append(E(st.start + c["fish"] + 0.1, sfx.whoosh(1.0, 400, 2500, seed=12, peak=0.5), 0.3, 0.3, 0.2))
+    ev.append(E(st.start + c["catch"], kit.one("gulp", sfx.gulp, -15.0), 0.6, -0.1, 0.1))
     for k in range(int(st.duration * 2.4)):
-        ev.append(E(st.start + 0.2 + k / 2.4, sfx.flap(20 + k, 0.5), 0.12, 0.35, 0.1))
+        ev.append(E(st.start + 0.2 + k / 2.4, flap(20 + k, 0.5), 0.1, 0.35, 0.1))
 
     # 9. Hill: effort, then a freewheel buzzing faster and faster, wind roar, plank thunder
     st, ctx = _ctx(film, "s09_hill")
@@ -221,7 +264,8 @@ def scene_events(film):
     clicks_t, gains = _freewheel(m, c["crest"], st.duration)
     ev.append(E(st.start, sfx.clicks(list(clicks_t), seg, sfx.tick(3300), list(gains)), 0.28, -0.05, 0.03))
     wind_curve = _curve(ts, np.clip(v / 2500, 0, 1), 0, seg)
-    ev.append(E(st.start, sfx.wind(seg, wind_curve, seed=9), 0.22, 0.0, 0.0))
+    ev.append(E(st.start, kit.bed("wind", seg, lambda: S.pan(sfx.wind(seg, wind_curve, seed=9), 0.0), level=-21.0,
+                                  curve=wind_curve ** 1.3), 0.6, 0.0, 0.0))
     road = np.where(ts < 0, 0, 1)
     del road
     ev.append(E(st.start, sfx.roll_noise(seg, _curve(ts, np.clip(v / 2500, 0, 1) * (m.x[: len(ts)] < course.x_pier), 0, seg)),
@@ -236,21 +280,28 @@ def scene_events(film):
         thumps += [m.t[i + 1] for i in crossings if m.t[i + 1] < c["launch"]]
     thumps.sort()
     ev.append(E(st.start, sfx.clicks(thumps, seg, sfx.plank_thump(1)), 0.11, 0.0, 0.1))
+    if kit.on and thumps:
+        rattle = eleven.effect("pier_rattle", None, -20.0)
+        span = min(len(rattle), int((thumps[-1] - thumps[0] + 0.3) * SR))
+        r = rattle[:span].copy()
+        r[-int(0.2 * SR):] *= np.linspace(1, 0, int(0.2 * SR))[:, None]
+        ev.append(E(st.start + thumps[0], r, 0.55, 0.0, 0.1))
     ev.append(E(st.start + c["duck"], sfx.shimmer(0.6, seed=9, count=14), 0.4, 0.2, 0.3))
     t = c["duck"] + 0.9
     while t < c["L44"]:
         phase = (t - c["duck"]) * 14
         if math.sin(phase) > 0.98:
-            ev.append(E(st.start + t, sfx.squeak(int(t * 10) % 3), 0.55, 0.2, 0.15))
+            ev.append(E(st.start + t, kit.hit("duck_squeak", lambda: sfx.squeak(int(t * 10) % 3), level=-17.0,
+                                              min_gap=0.15, length=0.35), 0.6, 0.2, 0.15))
             t += 0.2
         t += 0.005
     u0 = c["umbrella"]
     ev.append(E(st.start + u0, sfx.shimmer(0.4, seed=10, count=10), 0.4, -0.2, 0.3))
-    ev.append(E(st.start + u0 + 0.4, sfx.fwump(), 0.9, -0.2, 0.2))
+    ev.append(E(st.start + u0 + 0.4, kit.one("umbrella", sfx.fwump, -14.0), 0.8, -0.2, 0.2))
     ev.append(E(st.start + u0 + 0.8, sfx.fabric_flip(), 0.8, -0.3, 0.2))
     ev.append(E(st.start + u0 + 1.0, sfx.whoosh(0.9, 300, 2500, rise=False, seed=13, peak=0.3), 0.5, -0.6, 0.2))
     for k in range(int((c["launch"] - c["pier"] + 0.8) * 5)):
-        ev.append(E(st.start + c["pier"] - 0.8 + k / 5, sfx.flap(40 + k, 0.5), 0.15, 0.4, 0.1))
+        ev.append(E(st.start + c["pier"] - 0.8 + k / 5, flap(40 + k, 0.5), 0.12, 0.4, 0.1))
     ev.append(E(st.start + c["launch"] - 0.1, sfx.whoosh(0.8, 200, 4000, seed=14, peak=0.3), 0.6, 0.0, 0.3))
 
     # 10. Flight: a low hush in slow motion; the wings open with a roar of air; every downstroke whooshes
@@ -261,12 +312,12 @@ def scene_events(film):
     hush = S.lowpass(sfx.wind(c["wings"], np.full(int(c["wings"] * SR), 0.4), seed=15), 500)
     ev.append(E(st.start, hush, 0.6, 0.0, 0.2))
     ev.append(E(st.start + c["wings"] - 0.05, sfx.whoosh(1.0, 80, 2500, seed=16, peak=0.25), 1.0, 0.0, 0.3))
-    ev.append(E(st.start + c["wings"], sfx.flap(60, 2.4), 0.9, 0.0, 0.3))
+    ev.append(E(st.start + c["wings"], flap(60, 2.4), 0.9, 0.0, 0.3))
     t = c["wings"] + 0.75
     while t < st.duration:
         phase = (t - c["wings"]) * 2 * math.pi * 1.4 + math.pi / 2
         if math.sin(phase) < -0.995:
-            ev.append(E(st.start + t, sfx.flap(int(t * 7), 1.6), 0.45, -0.05, 0.15))
+            ev.append(E(st.start + t, flap(int(t * 7), 1.6), 0.45, -0.05, 0.15))
             t += 0.3
         t += 0.004
     # he rushes past the camera: pitch up as he approaches, down as he goes (Doppler)
@@ -279,9 +330,10 @@ def scene_events(film):
     rush = np.interp(idx, np.arange(n), rush) * np.exp(-((u - 0.7) ** 2) / 0.03) * 2.0
     ev.append(E(st.start + c["wings"], S.pan(rush.astype(np.float32), 0.0) * np.stack([1 - 0.4 * u, 0.6 + 0.4 * u], axis=1).astype(np.float32), 0.7, 0.0, 0.2))
     seg = st.duration - c["wings"]
-    ev.append(E(st.start + c["wings"], sfx.wind(seg, np.full(int(seg * SR), 0.45), seed=17), 0.16, 0.0, 0.0))
+    ev.append(E(st.start + c["wings"], kit.bed("wind", seg, lambda: S.pan(sfx.wind(seg, np.full(int(seg * SR), 0.45), seed=17), 0.0),
+                                               level=-27.0), 0.6, 0.0, 0.0))
     for k in range(int((st.duration - c["soar"]) * 3)):
-        ev.append(E(st.start + c["soar"] + 1.0 + k / 3, sfx.flap(80 + k, 0.5), 0.12, 0.4, 0.1))
+        ev.append(E(st.start + c["soar"] + 1.0 + k / 3, flap(80 + k, 0.5), 0.1, 0.4, 0.1))
     del s10
 
     # 11. Beach: touchdown in sand, sand braking, the page closing in
@@ -289,12 +341,12 @@ def scene_events(film):
     from ..scenes import s11_beach as s11
     c = st.cues
     touch = c["land"] + s11.TOUCH
-    ev.append(E(st.start + c["land"], sfx.flap(90, 1.8), 0.4, -0.3, 0.2))
+    ev.append(E(st.start + c["land"], flap(90, 1.8), 0.4, -0.3, 0.2))
     ev.append(E(st.start + touch, sfx.thud(60, 0.4), 0.45, 0.0, 0.2))
     ev.append(E(st.start + touch, sfx.rustle(0.5, 11, 1.2), 0.4, 0.0, 0.1))
     n = int(1.6 * SR)
     sand = sfx.roll_noise(1.6, np.linspace(1, 0, n) ** 1.5, surface="sand", seed=3)
-    ev.append(E(st.start + touch, sand, 0.9, 0.0, 0.1))
+    ev.append(E(st.start + touch, kit.one("sand_skid", lambda: sand, -16.0), 0.75 if kit.on else 0.9, 0.0, 0.1))
     m = s11._ride(ctx)
     ts, cad, v = _cadence(m, c["rideoff"], st.duration)
     seg = st.duration - c["rideoff"]
@@ -309,7 +361,15 @@ def scene_events(film):
     n = int(roll * SR)
     rumble = S.lowpass(S.brown(n, "wheelroll"), 300) * np.linspace(0.6, 1.0, n) * 0.8
     ev.append(E(st.start + c["post"], S.pan(rumble, 0.0) * np.stack([np.linspace(1.3, 0.7, n), np.linspace(0.3, 0.7, n)], axis=1).astype(np.float32), 1.0, 0.0, 0.1))
-    ev.append(E(st.start + c["wobble"], sfx.euler_disk(2.0), 0.7, 0.0, 0.15))
+    if kit.on:
+        disc = eleven.effect("spinning_disc", None, -17.0)
+        env = np.abs(disc.mean(axis=1))
+        hop = int(0.01 * SR)
+        e = env[: len(env) // hop * hop].reshape(-1, hop).max(axis=1)
+        stop = (np.nonzero(e > e.max() * 0.1)[0][-1] + 1) * hop / SR
+        ev.append(E(st.start + c["wobble"] + 2.0 - stop, disc, 0.7, 0.0, 0.15))
+    else:
+        ev.append(E(st.start + c["wobble"], sfx.euler_disk(2.0), 0.7, 0.0, 0.15))
     return ev
 
 

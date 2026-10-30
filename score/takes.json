@@ -1,0 +1,156 @@
+{
+ "M01.t1": {
+  "generation_id": "112diX88DEMPiQpsJ8D3",
+  "session_id": "y2aeRFvS1dGkEC6BPVH4",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Whimsical animated-film score intro, instrumental. Curious and light: a soft ticking synth arpeggio and twinkling celesta over a warm string pad in D major, gently inquisitive, as if something is abou",
+  "duration_secs": 14
+ },
+ "M01.t2": {
+  "generation_id": "fUptQzNWtZo0CjPfgC8f",
+  "session_id": "aWrln2uoD5M0h4OeYQTu",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Whimsical animated-film score intro, instrumental. Curious and light: a soft ticking synth arpeggio and twinkling celesta over a warm string pad in D major, gently inquisitive, as if something is abou",
+  "duration_secs": 14
+ },
+ "M02.t1": {
+  "generation_id": "U6J9o2Iy9S0mmxlRTAZ2",
+  "session_id": "uFjnbCPT90NFPHOjscWL",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Quirky comedic chamber-orchestra underscore for an animated film, instrumental, D major, around 108 BPM. Plucky pizzicato strings, staccato bassoon and clarinet, soft woodblock and xylophone accents, ",
+  "duration_secs": 30
+ },
+ "M02.t2": {
+  "generation_id": "mHtAPExG9ShBqdKesP1o",
+  "session_id": "eiyxVuutQa6CfJhxjK8V",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Quirky comedic chamber-orchestra underscore for an animated film, instrumental, D major, around 108 BPM. Plucky pizzicato strings, staccato bassoon and clarinet, soft woodblock and xylophone accents, ",
+  "duration_secs": 30
+ },
+ "M03.t1": {
+  "generation_id": "uEq5g6M8PmdArRTKlLrh",
+  "session_id": "peXDMs4EW5gG5iaKRZfN",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Fast, frantic comedic montage music for an animated film, instrumental: rapid pizzicato strings, racing xylophone runs, oom-pah tuba and snare, cartoonish and accelerating, ending abruptly at 9 second",
+  "duration_secs": 12
+ },
+ "M03.t2": {
+  "generation_id": "hr5FsSnezZtrahAaG4VZ",
+  "session_id": "svH2InZLzc7slDvDRd3v",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Fast, frantic comedic montage music for an animated film, instrumental: rapid pizzicato strings, racing xylophone runs, oom-pah tuba and snare, cartoonish and accelerating, ending abruptly at 9 second",
+  "duration_secs": 12
+ },
+ "M04.t1": {
+  "generation_id": "teYkjDQWZ2r0FXl40sDa",
+  "session_id": "xL13bIErirpxRBJpxumI",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Tender, intimate orchestral underscore for an animated film, instrumental. Solo felt piano with soft sustained strings in D major, slow tempo around 70 BPM, very sparse and quiet so it sits under dial",
+  "duration_secs": 61.52
+ },
+ "M04.t2": {
+  "generation_id": "NlPMsVxQ8VgbSawAabN9",
+  "session_id": "GxKvpLwcgl5fb4sJH0ku",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Tender, intimate orchestral underscore for an animated film, instrumental. Solo felt piano with soft sustained strings in D major, slow tempo around 70 BPM, very sparse and quiet so it sits under dial",
+  "duration_secs": 61.48
+ },
+ "M05.t1": {
+  "generation_id": "lQoGsgsB6rAO12bXahwe",
+  "session_id": "LcmbOrMzcKm1L628th5n",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Magical transformation cue for an animated film, instrumental, D major. It opens with a shimmering harp glissando and sparkling celesta, then a rising string swell bursts at 4 seconds into a soaring, ",
+  "duration_secs": 39
+ },
+ "M05.t2": {
+  "generation_id": "HnnhtejyKBcg7ZfrG7vp",
+  "session_id": "SwlkUlBAdbrq66QdJR6S",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Magical transformation cue for an animated film, instrumental, D major. It opens with a shimmering harp glissando and sparkling celesta, then a rising string swell bursts at 4 seconds into a soaring, ",
+  "duration_secs": 39
+ },
+ "M06.t1": {
+  "generation_id": "SriCufxbMm02lPHD1MAG",
+  "session_id": "5rCsikMG9CRisFJdQRjc",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Playful, encouraging animated-film underscore, instrumental, D major. Tentative, wobbly bassoon and pizzicato strings like someone learning to balance, then a comic orchestral stumble and sudden stop ",
+  "duration_secs": 31
+ },
+ "M06.t2": {
+  "generation_id": "sbKNfzpqt0nDLjblCJJc",
+  "session_id": "HoQ38yMEhIYcuEvWk03C",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Playful, encouraging animated-film underscore, instrumental, D major. Tentative, wobbly bassoon and pizzicato strings like someone learning to balance, then a comic orchestral stumble and sudden stop ",
+  "duration_secs": 31
+ },
+ "M07.t1": {
+  "generation_id": "O1APnHkUhHfsQjdDgO2Y",
+  "session_id": "E8Y6U9GNHPqlg7imYYP4",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Joyful, carefree seaside riding music for an animated film, instrumental, D major, around 124 BPM. Bouncy acoustic guitar and mandolin, a cheerful accordion and piccolo melody, glockenspiel and light ",
+  "duration_secs": 16
+ },
+ "M07.t2": {
+  "generation_id": "rpymnBFOCWauTTpURkiW",
+  "session_id": "TO9hQwAOC8m3BFmr1LHf",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Joyful, carefree seaside riding music for an animated film, instrumental, D major, around 124 BPM. Bouncy acoustic guitar and mandolin, a cheerful accordion and piccolo melody, glockenspiel and light ",
+  "duration_secs": 16
+ },
+ "M08.t1": {
+  "generation_id": "uQhXJ8Db1gzS9w2s0Esy",
+  "session_id": "Yx1tDIQyDYj5MXIqGPcC",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Comedic runaway chase cue for an animated film, instrumental. For the first 9 seconds a tense, suspenseful hush: quiet string tremolo and ticking pizzicato, uneasy. At 10 seconds it explodes into a fr",
+  "duration_secs": 29
+ },
+ "M08.t2": {
+  "generation_id": "qqyA5xvn0DkgZzT4O8Uz",
+  "session_id": "FqwOTPqKyl92KkMjZ08f",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Comedic runaway chase cue for an animated film, instrumental. For the first 9 seconds a tense, suspenseful hush: quiet string tremolo and ticking pizzicato, uneasy. At 10 seconds it explodes into a fr",
+  "duration_secs": 29
+ },
+ "M09.t1": {
+  "generation_id": "hfVFHoB32nEwlykY1qR7",
+  "session_id": "uioUvgGHhmINezJMmHzd",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Breathtaking flight cue for an animated film, instrumental, D major. For the first 9 seconds time stands still: soft high strings, a gentle wordless choir pad and a slow heartbeat-like pulse, tender a",
+  "duration_secs": 21.04
+ },
+ "M09.t2": {
+  "generation_id": "kKyxggEiOLkSdTf8nhpB",
+  "session_id": "l1U3lAcGdEF2PGjAgz2b",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Breathtaking flight cue for an animated film, instrumental, D major. For the first 9 seconds time stands still: soft high strings, a gentle wordless choir pad and a slow heartbeat-like pulse, tender a",
+  "duration_secs": 21
+ },
+ "M10.t1": {
+  "generation_id": "WuMDe4vRC8SnGaDdQouC",
+  "session_id": "62COFuMOz6kdjqgG5WtZ",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Warm sunset resolution cue for an animated film, instrumental, D major, slow. Gentle fingerpicked acoustic guitar and soft strings with a tender flute melody, peaceful, heartfelt and a little nostalgi",
+  "duration_secs": 27
+ },
+ "M10.t2": {
+  "generation_id": "fdIhshdQaONPWb5CniOp",
+  "session_id": "xuVdhVbAHobwxs2ePBeK",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Warm sunset resolution cue for an animated film, instrumental, D major, slow. Gentle fingerpicked acoustic guitar and soft strings with a tender flute melody, peaceful, heartfelt and a little nostalgi",
+  "duration_secs": 27
+ },
+ "M11.t1": {
+  "generation_id": "azMN91fbV0CUIYr9DCCp",
+  "session_id": "kv7ho9eVFFwDgptBMUBc",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Bright, joyful end-credits finale for an animated film, instrumental, D major, upbeat. Full whimsical orchestra: bouncy pizzicato, glockenspiel, flute and clarinet melody, warm brass and light percuss",
+  "duration_secs": 13
+ },
+ "M11.t2": {
+  "generation_id": "yRc207leD7gJwvh7jgXG",
+  "session_id": "xI9u2j0q3VJFtcoksTEN",
+  "model_id": "eleven_music_v2_5",
+  "prompt": "Bright, joyful end-credits finale for an animated film, instrumental, D major, upbeat. Full whimsical orchestra: bouncy pizzicato, glockenspiel, flute and clarinet melody, warm brass and light percuss",
+  "duration_secs": 12.96
+ }
+}

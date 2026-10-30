@@ -1,0 +1,380 @@
+{
+ "bell.t1": {
+  "generation_id": "fsXxzRxdDzVa3ANtHTgW",
+  "session_id": "UzWmt1Yuhnbf1h4i51o4",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Classic bicycle bell, two bright rings, ding ding",
+  "duration_secs": 1.48
+ },
+ "bell.t2": {
+  "generation_id": "qglh8MmTu5xzZ7ekphnX",
+  "session_id": "fYKMXnd46aw8hhAUtdGr",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Classic bicycle bell, two bright rings, ding ding",
+  "duration_secs": 1.48
+ },
+ "bell.t3": {
+  "generation_id": "SmSl446Sg9Y3OPjPMPed",
+  "session_id": "3BiLZU09lk9kubD1srpo",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Classic bicycle bell, two bright rings, ding ding",
+  "duration_secs": 1.48
+ },
+ "boing.t1": {
+  "generation_id": "xDYDhUTb2lvGUtgKVOk4",
+  "session_id": "hr1DJCVhtqMifuGSHiPc",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon spring boing",
+  "duration_secs": 0.8
+ },
+ "boing.t2": {
+  "generation_id": "YPGeUArSBqNZu4VVb4eQ",
+  "session_id": "sDCOg6WPgUKLoA7uxhrX",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon spring boing",
+  "duration_secs": 0.8
+ },
+ "duck_squeak.t1": {
+  "generation_id": "LqlkMa5tk4Xbj0nePkBA",
+  "session_id": "HgEGJSro6AVqy8TOM9nZ",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Rubber duck squeak, a single squeeze",
+  "duration_secs": 0.6
+ },
+ "duck_squeak.t2": {
+  "generation_id": "fAeTaKLaekJD5N1mBtSA",
+  "session_id": "fubxGVr4Obx9x5UvYjh7",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Rubber duck squeak, a single squeeze",
+  "duration_secs": 0.6
+ },
+ "duck_squeak.t3": {
+  "generation_id": "kycVclWnp0i3vv2rOiib",
+  "session_id": "SQK8lworA8BmaPuKWk5Y",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Rubber duck squeak, a single squeeze",
+  "duration_secs": 0.6
+ },
+ "eraser.t1": {
+  "generation_id": "0giLWISqZsGAUvCuJRsI",
+  "session_id": "hciSI86lxln4zR0596dv",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Pencil eraser rubbing quickly on paper",
+  "duration_secs": 1
+ },
+ "eraser.t2": {
+  "generation_id": "qNSLG4LJDsDvrrNhsW7y",
+  "session_id": "LYJ75UsSxOtEYjtmm3TT",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Pencil eraser rubbing quickly on paper",
+  "duration_secs": 1
+ },
+ "fish_splash.t1": {
+  "generation_id": "snCRMVUe5Eu5NvbIueYF",
+  "session_id": "N73QcjamoLD050VQR53b",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A fish leaping out of the sea with a bright water splash",
+  "duration_secs": 1.48
+ },
+ "fish_splash.t2": {
+  "generation_id": "0ho6oK1o1wLsXdJKx6Ed",
+  "session_id": "JLGgdbjKy0RLmMG5sjEM",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A fish leaping out of the sea with a bright water splash",
+  "duration_secs": 1.48
+ },
+ "gulls.t1": {
+  "generation_id": "d4hIYw1DlpUMZdnCQGOg",
+  "session_id": "eLw6SllWEOZqpiMTxRYS",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Herring gull calls outdoors at the seaside, a few loud cries and laughing squawks, close",
+  "duration_secs": 5
+ },
+ "gulls.t2": {
+  "generation_id": "PD8AGbZJJfQ9ZqgxB46n",
+  "session_id": "VkiaIfW8XJdhKG590cis",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Herring gull calls outdoors at the seaside, a few loud cries and laughing squawks, close",
+  "duration_secs": 5
+ },
+ "gulp.t1": {
+  "generation_id": "Ngq8u5MejmOLEodG3Wjo",
+  "session_id": "nUckEPKqeG5d1KRj4NPM",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon gulp, a big comical swallow",
+  "duration_secs": 1
+ },
+ "gulp.t2": {
+  "generation_id": "JuA8E4J579Xe4GLqzdyG",
+  "session_id": "swkJyJ0yLZG88DgVS212",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon gulp, a big comical swallow",
+  "duration_secs": 1
+ },
+ "gulp.t3": {
+  "generation_id": "pVKNYtCmMBEEQRgxltQZ",
+  "session_id": "hdGOS5TBlV6fo5LHl8UJ",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon gulp, a big comical swallow",
+  "duration_secs": 1
+ },
+ "hedge_crash.t1": {
+  "generation_id": "RFDuPc1yu0V2kMXKZBDG",
+  "session_id": "Hbl9waVDzuIZPGE65yQw",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A bicycle crashing into a leafy hedge, branches snapping, leaves rustling, metal clatter",
+  "duration_secs": 2.48
+ },
+ "hedge_crash.t2": {
+  "generation_id": "WvST28W8FkdOnqbD3spE",
+  "session_id": "VNBPAV1kjlNiCIRWItvP",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A bicycle crashing into a leafy hedge, branches snapping, leaves rustling, metal clatter",
+  "duration_secs": 2.48
+ },
+ "hedge_crash.t3": {
+  "generation_id": "yuqCrSjAxhYyRXc1TRz3",
+  "session_id": "4MRPqfVQu3ekDWVA5wdo",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A bicycle crashing into a leafy hedge, branches snapping, leaves rustling, metal clatter",
+  "duration_secs": 2.48
+ },
+ "key_click.t1": {
+  "generation_id": "LWGmuhPekrnjnRar6AMK",
+  "session_id": "T5nD2acajyPYafpxTfGI",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A single soft laptop keyboard key click, close",
+  "duration_secs": 0.48
+ },
+ "key_click.t2": {
+  "generation_id": "PbF3UdCrfqvSeDEHMEbA",
+  "session_id": "Xdyg7X4xKXm4gFfJ1qoS",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A single soft laptop keyboard key click, close",
+  "duration_secs": 0.48
+ },
+ "magic_swell.t1": {
+  "generation_id": "SlZ35fxfKzz4PSVUkVV1",
+  "session_id": "AgHPrKDOevQmvbHOXV4v",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Magical sparkling shimmer swelling up into a bright twinkling burst, fairy dust",
+  "duration_secs": 3
+ },
+ "magic_swell.t2": {
+  "generation_id": "bSoEinC2foWxiREjgvES",
+  "session_id": "D87lhkZyC4GZuVG3ztla",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Magical sparkling shimmer swelling up into a bright twinkling burst, fairy dust",
+  "duration_secs": 3
+ },
+ "magic_swell.t3": {
+  "generation_id": "ia6GcUAwfxymj9APBr06",
+  "session_id": "1yTm1CjGHcCsXsBU9vct",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Magical sparkling shimmer swelling up into a bright twinkling burst, fairy dust",
+  "duration_secs": 3
+ },
+ "paper_tear.t1": {
+  "generation_id": "9uyFzs7pouluOH99aAzI",
+  "session_id": "PsdxgxP8NFup6qLyCCKb",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A large sheet of paper tearing slowly and cleanly",
+  "duration_secs": 2.48
+ },
+ "paper_tear.t2": {
+  "generation_id": "5Ywx2a6KvcgL2Oqow5GP",
+  "session_id": "Y86w3lGn2P3Sv9eMkxAx",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A large sheet of paper tearing slowly and cleanly",
+  "duration_secs": 2.48
+ },
+ "pier_rattle.t1": {
+  "generation_id": "u7qF1aPWCZVPQg5eU9KK",
+  "session_id": "elcuNL1PvGXEl5rCp52m",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Bicycle racing fast over loose wooden boardwalk planks, rapid rhythmic clattering thumps",
+  "duration_secs": 5
+ },
+ "pier_rattle.t2": {
+  "generation_id": "7w25bCkmTDprISKsi9JM",
+  "session_id": "BPHrZWE03iwUezFcamRw",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Bicycle racing fast over loose wooden boardwalk planks, rapid rhythmic clattering thumps",
+  "duration_secs": 5
+ },
+ "reveal_boom.t1": {
+  "generation_id": "CJwFAPB3dw3On8qNrP0Q",
+  "session_id": "rLxiQFfIVDOUSGpoFYP9",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Deep cinematic boom with a long shimmering tail",
+  "duration_secs": 3
+ },
+ "reveal_boom.t2": {
+  "generation_id": "LkCpj4zrVD5MPWAsS39v",
+  "session_id": "Ds63Dogt06NEeqXkKof5",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Deep cinematic boom with a long shimmering tail",
+  "duration_secs": 3
+ },
+ "sand_skid.t1": {
+  "generation_id": "v396JeRGu3xeZ8fQU3bl",
+  "session_id": "7wq9kHBBPc0A9i7dNIki",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Bicycle tyres skidding to a stop in soft sand",
+  "duration_secs": 1.6
+ },
+ "sand_skid.t2": {
+  "generation_id": "5WFueWpNhniF9dH3THnt",
+  "session_id": "uDcisBMW4U0KSJZvtMq5",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Bicycle tyres skidding to a stop in soft sand",
+  "duration_secs": 1.6
+ },
+ "sand_skid.t3": {
+  "generation_id": "wMKs1McFuH0zQpHdBRAw",
+  "session_id": "ZOVrE7bqvN6dXByTpSTT",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Bicycle tyres skidding to a stop in soft sand",
+  "duration_secs": 1.6
+ },
+ "sea.t1": {
+  "generation_id": "EbCK3HvmEuapnH2wgvbh",
+  "session_id": "viCBjyxgzD5KcJvumy7t",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Calm sea waves washing gently onto a sandy beach, soft distant surf, light breeze, peaceful seaside ambience",
+  "duration_secs": 20
+ },
+ "sea.t2": {
+  "generation_id": "Xz0oWTC5OgZtFtozThoc",
+  "session_id": "4xQqlfGdqBMpBkWkZS9D",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Calm sea waves washing gently onto a sandy beach, soft distant surf, light breeze, peaceful seaside ambience",
+  "duration_secs": 20
+ },
+ "sea.t3": {
+  "generation_id": "ApONrCsQ5F3dQ3dadHtb",
+  "session_id": "eopTk3nSdHdsVHlzW0pc",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Calm sea waves washing gently onto a sandy beach, soft distant surf, light breeze, peaceful seaside ambience",
+  "duration_secs": 20
+ },
+ "slide_whistle.t1": {
+  "generation_id": "BB1Jn9th0Iic4HAW7kn1",
+  "session_id": "MoMABN3vUdB4rWxm2c6Z",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon slide whistle descending slowly",
+  "duration_secs": 2.48
+ },
+ "slide_whistle.t2": {
+  "generation_id": "INJGQIQGTAFZbKZcLuvr",
+  "session_id": "p9XbKqW7QgbGaazaArNj",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon slide whistle descending slowly",
+  "duration_secs": 2.48
+ },
+ "slide_whistle.t3": {
+  "generation_id": "naidm1tS3MIvg1b7BHDG",
+  "session_id": "Xw2E6Zeysd5SLPjoJbqE",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Cartoon slide whistle descending slowly",
+  "duration_secs": 2.48
+ },
+ "spinning_disc.t1": {
+  "generation_id": "rusDSz8ksXHQxZHM9cTH",
+  "session_id": "Quj7V9lYyh0cjFqSVozl",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A heavy metal disc spinning on a glass table, wobbling faster and faster with a rising whirr, then suddenly settling flat and silent",
+  "duration_secs": 3
+ },
+ "spinning_disc.t2": {
+  "generation_id": "IZBVRneasW5ZR6iQ8Txu",
+  "session_id": "cvQXLf1XzOVNmRNuuM6M",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A heavy metal disc spinning on a glass table, wobbling faster and faster with a rising whirr, then suddenly settling flat and silent",
+  "duration_secs": 3
+ },
+ "umbrella.t1": {
+  "generation_id": "SjZ0uzI1d49hpe5DL9p1",
+  "session_id": "trBL2frTCzswoSsF2MW2",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "An umbrella snapping open quickly with a fabric whoomp",
+  "duration_secs": 1
+ },
+ "umbrella.t2": {
+  "generation_id": "CoZDbcKe4504TdIabf1n",
+  "session_id": "hvdxYSzTW0Ee0kspzToh",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "An umbrella snapping open quickly with a fabric whoomp",
+  "duration_secs": 1
+ },
+ "umbrella.t3": {
+  "generation_id": "Y2jjj3SsXeZrzlAVQZY3",
+  "session_id": "pWtEfrxHnxCYq71VdCDo",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "An umbrella snapping open quickly with a fabric whoomp",
+  "duration_secs": 1
+ },
+ "wheel_clatter.t1": {
+  "generation_id": "OuFMtHvCmD8tm5ci9pG5",
+  "session_id": "tY3YTfCRkvowlLpPW3Aj",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A loose bicycle wheel rolling away and clattering to a stop on a hard floor, metallic rattle",
+  "duration_secs": 2.48
+ },
+ "wheel_clatter.t2": {
+  "generation_id": "3E85dp8J3H7p1w9lYtaf",
+  "session_id": "yeOy4EDRm5kZxhHFFwJK",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A loose bicycle wheel rolling away and clattering to a stop on a hard floor, metallic rattle",
+  "duration_secs": 2.48
+ },
+ "wheel_clatter.t3": {
+  "generation_id": "hpV8lFv5mqNZKqqQsywD",
+  "session_id": "CuaX9nk2XJI7UMkULYBK",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "A loose bicycle wheel rolling away and clattering to a stop on a hard floor, metallic rattle",
+  "duration_secs": 2.48
+ },
+ "wind.t1": {
+  "generation_id": "ItzR2u4UqPcbdZjT5gyg",
+  "session_id": "KHXw9zLuoX8tuik2UJ9r",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Strong wind rushing past at high speed, steady roaring airflow",
+  "duration_secs": 10
+ },
+ "wind.t2": {
+  "generation_id": "QortGyZgXGoI0DQIA6Px",
+  "session_id": "L6AeO4bbNCs1OgS9pHtH",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Strong wind rushing past at high speed, steady roaring airflow",
+  "duration_secs": 10
+ },
+ "wind.t3": {
+  "generation_id": "ZY855BnUOnlqcZCGvxQe",
+  "session_id": "38rqrj1lgNXDR24ftX8z",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Strong wind rushing past at high speed, steady roaring airflow",
+  "duration_secs": 10
+ },
+ "wings.t1": {
+  "generation_id": "oppaQWayTD7qkvuz9Zkv",
+  "session_id": "vbCWDQi6EuVO5VGGpJiK",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Large bird wings flapping powerfully, heavy feathery whooshes",
+  "duration_secs": 2
+ },
+ "wings.t2": {
+  "generation_id": "3d2Adj67cVmbC1TQJsLh",
+  "session_id": "UW3rj3r4zdjk1F56XFBZ",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Large bird wings flapping powerfully, heavy feathery whooshes",
+  "duration_secs": 2
+ },
+ "wings.t3": {
+  "generation_id": "Iu5TzXUantfsimeiCAmv",
+  "session_id": "Bu2iH23PBnGEYWyHSxVK",
+  "model_id": "eleven_text_to_sound_v2",
+  "prompt": "Large bird wings flapping powerfully, heavy feathery whooshes",
+  "duration_secs": 2
+ }
+}

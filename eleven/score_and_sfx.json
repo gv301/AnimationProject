@@ -1,0 +1,176 @@
+{
+ "flow": "https://elevenlabs.io/app/flows/lBccIdqH0UkNXqu07qqa",
+ "music": {
+  "model": "eleven_music_v2_5",
+  "instrumental": true,
+  "takes": 2,
+  "cues": {
+   "M01": {
+    "scene": "s01_prompt",
+    "duration_seconds": 14,
+    "prompt": "Whimsical animated-film score intro, instrumental. Curious and light: a soft ticking synth arpeggio and twinkling celesta over a warm string pad in D major, gently inquisitive, as if something is about to be created. A rising harp glissando at 11 seconds leads to a small, bright, playful orchestral chord at 12.5 seconds that rings out."
+   },
+   "M02": {
+    "scene": "s02_attempt1 + s03_attempt2",
+    "duration_seconds": 30,
+    "prompt": "Quirky comedic chamber-orchestra underscore for an animated film, instrumental, D major, around 108 BPM. Plucky pizzicato strings, staccato bassoon and clarinet, soft woodblock and xylophone accents, with little comedic pauses and hiccups. Light, sparse and bouncy so it sits under dialogue, gently mischievous, as if things keep going slightly wrong."
+   },
+   "M03": {
+    "scene": "s04_montage",
+    "duration_seconds": 10.5,
+    "prompt": "Fast, frantic comedic montage music for an animated film, instrumental: rapid pizzicato strings, racing xylophone runs, oom-pah tuba and snare, cartoonish and accelerating, ending abruptly at 9 seconds on a deflated sad trombone wah-wah."
+   },
+   "M04": {
+    "scene": "s05_talk",
+    "duration_seconds": 61.5,
+    "prompt": "Tender, intimate orchestral underscore for an animated film, instrumental. Solo felt piano with soft sustained strings in D major, slow tempo around 70 BPM, very sparse and quiet so it sits under dialogue. It begins lonely and weary, a solo cello joins gently around 25 seconds, and from 40 seconds it warms with hopeful rising strings and a soft flute line. In the last 5 seconds a magical shimmer of celesta and harp glissando builds anticipation and holds."
+   },
+   "M05": {
+    "scene": "s06_transform",
+    "duration_seconds": 39,
+    "prompt": "Magical transformation cue for an animated film, instrumental, D major. It opens with a shimmering harp glissando and sparkling celesta, then a rising string swell bursts at 4 seconds into a soaring, wondrous full orchestra with wordless choir and French horns, peaking around 10 seconds. From 12 seconds it settles into a warm, joyful, gentle theme with glockenspiel, flute and strings under dialogue, light and delighted. In the final 4 seconds a short, bright, triumphant orchestral fanfare flourish ends on a big chord."
+   },
+   "M06": {
+    "scene": "s07_learning",
+    "duration_seconds": 31,
+    "prompt": "Playful, encouraging animated-film underscore, instrumental, D major. Tentative, wobbly bassoon and pizzicato strings like someone learning to balance, then a comic orchestral stumble and sudden stop at 8 seconds. Cheeky, teasing clarinet and xylophone figures from 10 seconds. From 22 seconds it gathers momentum with rising strings and builds into a triumphant, joyful burst at 26 seconds with full strings and brass, ending bright."
+   },
+   "M07": {
+    "scene": "s08_ride",
+    "duration_seconds": 16,
+    "prompt": "Joyful, carefree seaside riding music for an animated film, instrumental, D major, around 124 BPM. Bouncy acoustic guitar and mandolin, a cheerful accordion and piccolo melody, glockenspiel and light shaker percussion, sunny and breezy, full of momentum."
+   },
+   "M08": {
+    "scene": "s09_hill",
+    "duration_seconds": 29,
+    "prompt": "Comedic runaway chase cue for an animated film, instrumental. For the first 9 seconds a tense, suspenseful hush: quiet string tremolo and ticking pizzicato, uneasy. At 10 seconds it explodes into a frantic, accelerating orchestral chase: racing strings, xylophone runs, brass stabs, timpani and snare, getting faster and more chaotic, building to a huge cliffhanger crescendo that cuts off abruptly at the very end."
+   },
+   "M09": {
+    "scene": "s10_flight",
+    "duration_seconds": 21,
+    "prompt": "Breathtaking flight cue for an animated film, instrumental, D major. For the first 9 seconds time stands still: soft high strings, a gentle wordless choir pad and a slow heartbeat-like pulse, tender and suspended. At 9.5 seconds it soars into an epic, triumphant, emotional full orchestral theme with choir, French horns, timpani and sweeping strings, flying high and free."
+   },
+   "M10": {
+    "scene": "s11_beach",
+    "duration_seconds": 27,
+    "prompt": "Warm sunset resolution cue for an animated film, instrumental, D major, slow. Gentle fingerpicked acoustic guitar and soft strings with a tender flute melody, peaceful, heartfelt and a little nostalgic, quiet enough for dialogue. From 20 seconds the melody swells sweetly with the full strings, then resolves softly on a gentle final chord."
+   },
+   "M11": {
+    "scene": "s12_credits",
+    "duration_seconds": 13,
+    "prompt": "Bright, joyful end-credits finale for an animated film, instrumental, D major, upbeat. Full whimsical orchestra: bouncy pizzicato, glockenspiel, flute and clarinet melody, warm brass and light percussion, celebratory, ending on a satisfying final chord with a little flourish."
+   }
+  }
+ },
+ "sfx": {
+  "model": "eleven_text_to_sound_v2",
+  "prompt_influence": 0.5,
+  "effects": {
+   "sea": {
+    "duration_seconds": 20,
+    "loop": true,
+    "prompt": "Calm sea waves washing gently onto a sandy beach, soft distant surf, light breeze, peaceful seaside ambience"
+   },
+   "gulls": {
+    "duration_seconds": 5,
+    "loop": false,
+    "prompt": "Herring gull calls outdoors at the seaside, a few loud cries and laughing squawks, close"
+   },
+   "wind": {
+    "duration_seconds": 10,
+    "loop": true,
+    "prompt": "Strong wind rushing past at high speed, steady roaring airflow"
+   },
+   "hedge_crash": {
+    "duration_seconds": 2.5,
+    "loop": false,
+    "prompt": "A bicycle crashing into a leafy hedge, branches snapping, leaves rustling, metal clatter"
+   },
+   "fish_splash": {
+    "duration_seconds": 1.5,
+    "loop": false,
+    "prompt": "A fish leaping out of the sea with a bright water splash"
+   },
+   "gulp": {
+    "duration_seconds": 1,
+    "loop": false,
+    "prompt": "Cartoon gulp, a big comical swallow"
+   },
+   "bell": {
+    "duration_seconds": 1.5,
+    "loop": false,
+    "prompt": "Classic bicycle bell, two bright rings, ding ding"
+   },
+   "wings": {
+    "duration_seconds": 2,
+    "loop": false,
+    "prompt": "Large bird wings flapping powerfully, heavy feathery whooshes"
+   },
+   "magic_swell": {
+    "duration_seconds": 3,
+    "loop": false,
+    "prompt": "Magical sparkling shimmer swelling up into a bright twinkling burst, fairy dust"
+   },
+   "paper_tear": {
+    "duration_seconds": 2.5,
+    "loop": false,
+    "prompt": "A large sheet of paper tearing slowly and cleanly"
+   },
+   "sand_skid": {
+    "duration_seconds": 1.6,
+    "loop": false,
+    "prompt": "Bicycle tyres skidding to a stop in soft sand"
+   },
+   "umbrella": {
+    "duration_seconds": 1,
+    "loop": false,
+    "prompt": "An umbrella snapping open quickly with a fabric whoomp"
+   },
+   "duck_squeak": {
+    "duration_seconds": 0.6,
+    "loop": false,
+    "prompt": "Rubber duck squeak, a single squeeze"
+   },
+   "wheel_clatter": {
+    "duration_seconds": 2.5,
+    "loop": false,
+    "prompt": "A loose bicycle wheel rolling away and clattering to a stop on a hard floor, metallic rattle"
+   },
+   "eraser": {
+    "duration_seconds": 1,
+    "loop": false,
+    "prompt": "Pencil eraser rubbing quickly on paper"
+   },
+   "spinning_disc": {
+    "duration_seconds": 3,
+    "loop": false,
+    "prompt": "A heavy metal disc spinning on a glass table, wobbling faster and faster with a rising whirr, then suddenly settling flat and silent"
+   },
+   "slide_whistle": {
+    "duration_seconds": 2.5,
+    "loop": false,
+    "prompt": "Cartoon slide whistle descending slowly"
+   },
+   "boing": {
+    "duration_seconds": 0.8,
+    "loop": false,
+    "prompt": "Cartoon spring boing"
+   },
+   "reveal_boom": {
+    "duration_seconds": 3,
+    "loop": false,
+    "prompt": "Deep cinematic boom with a long shimmering tail"
+   },
+   "key_click": {
+    "duration_seconds": 0.5,
+    "loop": false,
+    "prompt": "A single soft laptop keyboard key click, close"
+   },
+   "pier_rattle": {
+    "duration_seconds": 5,
+    "loop": false,
+    "prompt": "Bicycle racing fast over loose wooden boardwalk planks, rapid rhythmic clattering thumps"
+   }
+  }
+ }
+}
