@@ -67,6 +67,9 @@ class Renderer:
                     break
             except (TypeError, ValueError):
                 continue
+        if not any(d.use and d.type in ("OPTIX", "CUDA") for d in prefs.devices):
+            # Cycles would quietly fall back to the CPU: minutes per frame while paying for the GPU
+            raise RuntimeError("Cycles found no NVIDIA GPU in this container")
         scene.render.engine = "CYCLES"
         scene.cycles.device = "GPU"
         # keep the static scenery (BVH, textures) loaded between frames: each container renders a run
