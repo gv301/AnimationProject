@@ -40,7 +40,8 @@ image = (
 )
 
 
-@app.cls(gpu=GPU, image=image, timeout=3600, max_containers=20)
+# scaledown_window: a container with no frames left shuts down after 2 s instead of idling a minute
+@app.cls(gpu=GPU, image=image, timeout=3600, max_containers=20, scaledown_window=2)
 class Renderer:
     samples: int = modal.parameter(default=128)
     res: int = modal.parameter(default=1080)
@@ -122,4 +123,4 @@ def main(start: int = 3481, end: int = 8255, samples: int = 128, res: int = 1080
     hours = TOTAL_FRAMES * per / 3600
     print(f"\n{per:.1f} s per frame on {gpu} at {samples} samples. All {TOTAL_FRAMES} frames: about "
           f"{hours:.0f} GPU-hours, roughly ${hours * price_per_hour:.0f} at ${price_per_hour:.2f}/hour, "
-          f"plus about a minute of start-up per container. At 64 samples, expect a bit over half that.")
+          f"plus a few percent for start-up and the containers' CPU and memory, which Modal bills too.")
